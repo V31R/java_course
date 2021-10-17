@@ -10,6 +10,7 @@ public class Command {
         this.type = type;
 
     }
+
     public Command(CommandType type, String[] arguments) {
 
         this.type = type;

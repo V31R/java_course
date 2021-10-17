@@ -4,6 +4,7 @@ import kalchenko.command.Command;
 import java.util.Locale;
 
 public class TaskList {
+
     private Task[] tasks;
 
     public TaskList() {

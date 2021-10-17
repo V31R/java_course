@@ -9,7 +9,6 @@ public enum CommandType {
 
     public static CommandType getType(String string){
 
-
         CommandType result = null;
 
         for(CommandType commandType: CommandType.values()){

@@ -56,8 +56,11 @@ public class Controller {
 
             }
             else{
+
                 try {
+
                     taskList.performCommand(command);
+
                 }
                 catch (NumberFormatException numberFormatException){
 

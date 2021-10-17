@@ -4,7 +4,6 @@ import kalchenko.command.*;
 import java.util.Locale;
 import java.util.Scanner;
 
-
 public final class TerminalReader {
 
     private static final Scanner inputStream = new Scanner(System.in);

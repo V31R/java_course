@@ -2,12 +2,11 @@ package kalchenko.task;
 
 public class Task {
 
-    private boolean state;
+    private boolean state = false;
     private String description;
 
     public Task(String description) {
 
-        this.state = false;
         this.description = description;
 
     }
