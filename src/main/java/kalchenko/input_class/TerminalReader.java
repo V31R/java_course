@@ -1,12 +1,17 @@
 package kalchenko.input_class;
 import kalchenko.command.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Locale;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public final class TerminalReader {
 
-    private static final Scanner inputStream = new Scanner(System.in);
+    private static final BufferedReader  inputStream = new BufferedReader(new InputStreamReader(System.in));
+
+    //private static final Scanner inputStream = new Scanner(System.in);
 
     private static TerminalReader instance;
 
@@ -25,24 +30,42 @@ public final class TerminalReader {
 
     }
 
-    public Command inputCommand() throws IllegalArgumentException{
+    public Command inputCommand() throws IllegalArgumentException, IOException {
 
         Command result = null;
+        String[] inputCommand;
+        {
 
-        String commandName = inputStream.next();
+            String string = inputStream.readLine();
+            inputCommand=string.split(" ");
+
+        }
+        String commandName = inputCommand[0];
+        commandName=commandName.trim();
         commandName = commandName.toUpperCase(Locale.ROOT);
+
         CommandType commandType = CommandType.getType(commandName);
         if(commandType==null){
 
             throw new IllegalArgumentException("Incorrect command was entered!");
 
         }
+        result = new Command(commandType);
 
-        String arguments = inputStream.nextLine();
-        String[] args=new String[1];
-        args[0]=arguments.trim();
+        if(inputCommand.length>1) {
 
-        result=new Command(commandType, args);
+            String arguments = new String("");
+            for(int i=1; i < inputCommand.length;i++){
+
+                arguments=arguments.concat(inputCommand[i].concat(" "));
+
+            }
+
+            arguments = arguments.trim();
+            result.setArguments(arguments);
+
+        }
+
         return result;
 
     }

@@ -4,6 +4,8 @@ import kalchenko.command.*;
 import kalchenko.input_class.TerminalReader;
 import kalchenko.task.TaskList;
 
+import java.io.IOException;
+
 public class Controller {
 
     private static Controller instance;
@@ -43,7 +45,7 @@ public class Controller {
                 command=terminalReader.inputCommand();
 
             }
-            catch (IllegalArgumentException illegalArgumentException){
+            catch (IllegalArgumentException | IOException illegalArgumentException){
 
                 System.out.println(illegalArgumentException.getMessage());
                 command= new Command(CommandType.QUIT);

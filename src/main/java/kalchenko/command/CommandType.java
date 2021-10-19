@@ -11,13 +11,19 @@ public enum CommandType {
 
         CommandType result = null;
 
-        for(CommandType commandType: CommandType.values()){
+        try{
 
-            if(commandType.equals(string)){
+            result=CommandType.valueOf(string);
 
-                result = commandType;
+        }
+        catch(IllegalArgumentException illegalArgumentException){
 
-            }
+            return null;
+
+        }
+        catch(NullPointerException nullPointerException){
+
+            return null;
 
         }
 

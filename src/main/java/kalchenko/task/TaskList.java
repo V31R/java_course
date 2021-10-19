@@ -19,13 +19,13 @@ public class TaskList {
 
             case ADD -> {
 
-                add(command.getArguments()[0]);
+                add(command.getArguments());
 
             }
             case PRINT-> {
 
                 boolean isPrint = false;
-                if(command.getArguments()[0].equals("all")){
+                if(command.getArguments()!=null && command.getArguments().equals("all")){
 
                     isPrint=true;
 
@@ -38,9 +38,15 @@ public class TaskList {
 
                 try {
 
-                    Integer index = Integer.valueOf(command.getArguments()[0]);
+                    Integer index = Integer.valueOf(command.getArguments());
 
                     index--;
+                    if(tasks[index] == null||index>=tasks.length){
+
+                        System.err.println("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
+                        return;
+
+                    }
                     toggle(index);
 
                 }

@@ -3,7 +3,7 @@ package kalchenko.command;
 public class Command {
 
     private CommandType type;
-    private String[] arguments;
+    private String argument;
 
     public Command(CommandType type) {
 
@@ -11,10 +11,10 @@ public class Command {
 
     }
 
-    public Command(CommandType type, String[] arguments) {
+    public Command(CommandType type, String argument) {
 
         this.type = type;
-        this.arguments = arguments;
+        this.argument = argument;
 
     }
 
@@ -31,15 +31,15 @@ public class Command {
 
     }
 
-    public String[] getArguments() {
+    public String getArguments() {
 
-        return arguments;
+        return argument;
 
     }
 
-    public void setArguments(String[] arguments) {
+    public void setArguments(String argument) {
 
-        this.arguments = arguments;
+        this.argument = argument;
 
     }
 
