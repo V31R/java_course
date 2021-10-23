@@ -5,13 +5,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
-//import java.util.Scanner;
 
 public final class TerminalReader {
 
     private static final BufferedReader  inputStream = new BufferedReader(new InputStreamReader(System.in));
-
-    //private static final Scanner inputStream = new Scanner(System.in);
 
     private static TerminalReader instance;
 
