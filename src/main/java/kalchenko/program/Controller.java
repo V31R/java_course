@@ -38,7 +38,7 @@ public class Controller {
 
         while(open){
 
-            Command command;
+            Command command=null;
 
             try{
 
@@ -48,16 +48,18 @@ public class Controller {
             catch (IllegalArgumentException | IOException illegalArgumentException){
 
                 System.out.println(illegalArgumentException.getMessage());
-                command= new Command(CommandType.QUIT);
+                //command= new Command(CommandType.QUIT);
 
             }
 
-            if(command.getType()==CommandType.QUIT){
 
-                open = false;
+            if(command!=null){
 
-            }
-            else{
+                if(command.getType()==CommandType.QUIT){
+
+                    open = false;
+
+                }
 
                 try {
 
@@ -67,7 +69,11 @@ public class Controller {
                 catch (NumberFormatException numberFormatException){
 
                     System.out.println(numberFormatException.getMessage());
-                    open = false;
+
+                }
+                catch (IllegalArgumentException illegalArgumentException){
+
+                    System.out.println(illegalArgumentException.getMessage());
 
                 }
 

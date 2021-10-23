@@ -32,31 +32,23 @@ public class TaskList {
                     isPrint=true;
 
                 }
+                else if(command.getArguments()!=null){
+
+                    throw new IllegalArgumentException("Incorrect argument for " + command.getType().name().toLowerCase(Locale.ROOT));
+
+                }
 
                 print(isPrint);
 
             }
             case TOGGLE -> {
 
-                try {
+                toggleAndDeleteSwitch(command);
 
-                    Integer index = Integer.valueOf(command.getArguments());
+            }
+            case DELETE -> {
 
-                    index--;
-                    if(tasks.get(index) == null||index>=tasks.size()){
-
-                        System.err.println("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
-                        return;
-
-                    }
-                    toggle(index);
-
-                }
-                catch (NumberFormatException e) {
-
-                    System.err.println("Incorrect argument for " + command.getType().name().toLowerCase(Locale.ROOT));
-
-                }
+                toggleAndDeleteSwitch(command);
 
             }
 
@@ -98,6 +90,47 @@ public class TaskList {
 
         print(index);
         System.out.printf(" toggled to %b\n", tasks.get(index).getState());
+
+    }
+    public  void delete(int index){
+
+        tasks.remove(index);
+
+    }
+
+    private void toggleAndDeleteSwitch(Command command) throws NumberFormatException{
+
+        try {
+
+            Integer index = Integer.valueOf(command.getArguments());
+
+            index--;
+            if(index>=tasks.size()||tasks.get(index) == null){
+
+                throw new IllegalArgumentException("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
+
+            }
+
+            switch(command.getType()){
+                case TOGGLE -> {
+
+                    toggle(index);
+
+                }
+                case DELETE -> {
+
+                    delete(index);
+
+                }
+            }
+
+        }
+        catch (NumberFormatException e) {
+
+            throw new NumberFormatException("Incorrect argument for " + command.getType().name().toLowerCase(Locale.ROOT));
+
+
+        }
 
     }
 

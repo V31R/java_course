@@ -4,7 +4,10 @@ public enum CommandType {
 
     ADD,
     PRINT,
+    SEARCH,
     TOGGLE,
+    DELETE,
+    EDIT,
     QUIT;
 
     public static CommandType getType(String string){
