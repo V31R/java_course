@@ -48,10 +48,8 @@ public class Controller {
             catch (IllegalArgumentException | IOException illegalArgumentException){
 
                 System.out.println(illegalArgumentException.getMessage());
-                //command= new Command(CommandType.QUIT);
 
             }
-
 
             if(command!=null){
 

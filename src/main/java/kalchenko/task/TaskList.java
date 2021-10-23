@@ -41,6 +41,12 @@ public class TaskList {
                 print(isPrint);
 
             }
+            case SEARCH -> {
+
+                search(command.getArguments());
+
+
+            }
             case TOGGLE -> {
 
                 toggleAndDeleteSwitch(command);
@@ -72,6 +78,7 @@ public class TaskList {
 
                 print(i);
                 System.out.println();
+
             }
 
         }
@@ -84,7 +91,7 @@ public class TaskList {
 
     }
 
-    public  void toggle(int index){
+    public void toggle(int index){
 
         tasks.get(index).toggleState();
 
@@ -129,6 +136,20 @@ public class TaskList {
 
             throw new NumberFormatException("Incorrect argument for " + command.getType().name().toLowerCase(Locale.ROOT));
 
+        }
+
+    }
+
+    public void search(String subString){
+
+        for(int i = 0; i < tasks.size(); i++){
+
+            if(tasks.get(i).getDescription().lastIndexOf(subString)!=-1){
+
+                print(i);
+                System.out.println();
+
+            }
 
         }
 
