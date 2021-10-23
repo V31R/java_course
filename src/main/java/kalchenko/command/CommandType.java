@@ -34,11 +34,5 @@ public enum CommandType {
 
     }
 
-    public boolean equals(String string){
-
-        return this.name().equals(string);
-
-    }
-
 }
 

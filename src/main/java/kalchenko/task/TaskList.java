@@ -1,5 +1,6 @@
 package kalchenko.task;
 import kalchenko.command.Command;
+import kalchenko.command.CommandType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,11 @@ public class TaskList {
                 toggleAndDeleteSwitch(command);
 
             }
+            case EDIT -> {
 
+                edit(command.getArguments());
+
+            }
         }
 
     }
@@ -150,6 +155,39 @@ public class TaskList {
                 System.out.println();
 
             }
+
+        }
+
+    }
+
+    public void edit(String arguments){
+
+        String[] args = arguments.split(" ");
+        try{
+
+            Integer index = Integer.valueOf(args[0]);
+
+            index--;
+
+            if(args.length<2||index>=tasks.size()||tasks.get(index) == null){
+
+                throw new IllegalArgumentException("Incorrect argument for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
+
+            }
+
+            String description =" ";
+            for(int i = 1; i < args.length;i++){
+
+                description=description.concat(args[i].concat(" "));
+
+            }
+
+            tasks.get(index).setDescription(description);
+
+        }
+        catch (NumberFormatException e) {
+
+            throw new NumberFormatException("Incorrect argument for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
 
         }
 
