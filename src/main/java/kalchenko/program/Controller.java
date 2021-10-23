@@ -79,9 +79,6 @@ public class Controller {
 
         }
 
-        System.out.println("Program was finished.");
-
-
     }
 
 }

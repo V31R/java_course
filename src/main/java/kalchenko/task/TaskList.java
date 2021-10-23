@@ -48,12 +48,7 @@ public class TaskList {
 
 
             }
-            case TOGGLE -> {
-
-                toggleAndDeleteSwitch(command);
-
-            }
-            case DELETE -> {
+            case TOGGLE, DELETE -> {
 
                 toggleAndDeleteSwitch(command);
 
@@ -71,7 +66,6 @@ public class TaskList {
     public void add(String description){
 
         tasks.add(new Task(description));
-        System.out.println("Task " + description + " was added");
 
     }
 
@@ -100,11 +94,8 @@ public class TaskList {
 
         tasks.get(index).toggleState();
 
-        print(index);
-        System.out.printf(" toggled to %b\n", tasks.get(index).getState());
-
     }
-    public  void delete(int index){
+    public void delete(int index){
 
         tasks.remove(index);
 
