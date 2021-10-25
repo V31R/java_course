@@ -8,12 +8,13 @@ import java.util.Locale;
 
 public class TaskList {
 
+    private int current_id;
     private List<Task> tasks;
 
     public TaskList() {
 
         this.tasks = new ArrayList<>();
-
+        this.current_id = 1;
     }
 
     public  void performCommand(Command command) throws NumberFormatException{
@@ -65,7 +66,7 @@ public class TaskList {
 
     public void add(String description){
 
-        tasks.add(new Task(description));
+        tasks.add(new Task(current_id++,description));
 
     }
 
@@ -75,8 +76,7 @@ public class TaskList {
 
             if(tasks.get(i).getState() || isPrint){
 
-                print(i);
-                System.out.println();
+                print_task(tasks.get(i));
 
             }
 
@@ -84,9 +84,9 @@ public class TaskList {
 
     }
 
-    private void print(int index){
+    static private void print_task(Task task){
 
-        System.out.printf("%d.[%c] %s", index + 1, tasks.get(index).getState()?'x':' ' ,tasks.get(index).getDescription());
+        System.out.printf("%d.[%c] %s \n", task.getId(), task.getState()?'x':' ' ,task.getDescription());
 
     }
 
@@ -97,6 +97,12 @@ public class TaskList {
     }
     public void delete(int index){
 
+        current_id--;
+        for(int i = index; i< tasks.size();i++){
+
+            tasks.get(i).setId( tasks.get(i).getId()-1);
+
+        }
         tasks.remove(index);
 
     }
@@ -139,16 +145,9 @@ public class TaskList {
 
     public void search(String subString){
 
-        for(int i = 0; i < tasks.size(); i++){
-
-            if(tasks.get(i).getDescription().lastIndexOf(subString)!=-1){
-
-                print(i);
-                System.out.println();
-
-            }
-
-        }
+        tasks.stream()
+                .filter((t)->t.getDescription().lastIndexOf(subString)!=-1)
+                .forEach(TaskList::print_task);
 
     }
 
@@ -177,8 +176,7 @@ public class TaskList {
             StringBuilder description= new StringBuilder("");
             for(int i = 1; i < args.length; i++){
 
-                description.append(args[i]);
-                description.append(" ");
+                description.append(args[i]).append(" ");
 
             }
 

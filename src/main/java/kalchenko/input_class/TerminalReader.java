@@ -54,8 +54,7 @@ public final class TerminalReader {
             StringBuilder arguments = new StringBuilder("");
             for(int i=1; i < inputCommand.length;i++){
 
-                arguments.append(inputCommand[i]);
-                arguments.append(" ");
+                arguments.append(inputCommand[i]).append(" ");
 
             }
 
