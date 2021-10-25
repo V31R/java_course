@@ -107,6 +107,7 @@ public class TaskList {
 
             Integer index = Integer.valueOf(command.getArguments());
 
+
             index--;
             if(index>=tasks.size()||tasks.get(index) == null){
 
@@ -154,17 +155,24 @@ public class TaskList {
     public void edit(String arguments){
 
         String[] args = arguments.split(" ");
+
+        if(args.length<2){
+
+            throw new IllegalArgumentException("Incorrect argument for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
+
+        }
         try{
 
             Integer index = Integer.valueOf(args[0]);
 
             index--;
 
-            if(args.length<2||index>=tasks.size()||tasks.get(index) == null){
+            if(index>=tasks.size()||tasks.get(index) == null){
 
-                throw new IllegalArgumentException("Incorrect argument for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
+                throw new IllegalArgumentException("Incorrect index for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
 
             }
+
 
             String description =" ";
             for(int i = 1; i < args.length;i++){
