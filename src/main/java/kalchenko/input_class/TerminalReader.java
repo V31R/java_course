@@ -51,15 +51,16 @@ public final class TerminalReader {
 
         if(inputCommand.length>1) {
 
-            String arguments = new String("");
+            StringBuilder arguments = new StringBuilder("");
             for(int i=1; i < inputCommand.length;i++){
 
-                arguments=arguments.concat(inputCommand[i].concat(" "));
+                arguments.append(inputCommand[i]);
+                arguments.append(" ");
 
             }
 
-            arguments = arguments.trim();
-            result.setArguments(arguments);
+
+            result.setArguments(arguments.toString().trim());
 
         }
 

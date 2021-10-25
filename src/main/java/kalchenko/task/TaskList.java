@@ -174,14 +174,15 @@ public class TaskList {
             }
 
 
-            String description =" ";
-            for(int i = 1; i < args.length;i++){
+            StringBuilder description= new StringBuilder("");
+            for(int i = 1; i < args.length; i++){
 
-                description=description.concat(args[i].concat(" "));
+                description.append(args[i]);
+                description.append(" ");
 
             }
 
-            tasks.get(index).setDescription(description);
+            tasks.get(index).setDescription(description.toString().trim());
 
         }
         catch (NumberFormatException e) {
