@@ -2,18 +2,16 @@ package kalchenko.task;
 import kalchenko.command.Command;
 import kalchenko.command.CommandType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class TaskList {
 
     private int current_id;
-    private List<Task> tasks;
+    private LinkedHashMap<Integer, Task> tasks;
 
     public TaskList() {
 
-        this.tasks = new ArrayList<>();
+        this.tasks = new LinkedHashMap<Integer, Task>();
         this.current_id = 1;
     }
 
@@ -66,27 +64,20 @@ public class TaskList {
 
     public void add(String description){
 
-        tasks.add(new Task(current_id++,description));
+        tasks.put(current_id++,new Task(description));
 
     }
 
     public void print(boolean isPrint){
 
-        for(int i = 0; i < tasks.size(); i++){
+        tasks.entrySet().stream().forEach(TaskList::print_task);
 
-            if(tasks.get(i).getState() || isPrint){
-
-                print_task(tasks.get(i));
-
-            }
-
-        }
 
     }
 
-    static private void print_task(Task task){
+    static private void print_task(Map.Entry<Integer,Task> task){
 
-        System.out.printf("%d.[%c] %s \n", task.getId(), task.getState()?'x':' ' ,task.getDescription());
+        System.out.printf("%d.[%c] %s \n", task.getKey(), task.getValue().getState()?'x':' ' ,task.getValue().getDescription());
 
     }
 
@@ -97,12 +88,6 @@ public class TaskList {
     }
     public void delete(int index){
 
-        current_id--;
-        for(int i = index; i< tasks.size();i++){
-
-            tasks.get(i).setId( tasks.get(i).getId()-1);
-
-        }
         tasks.remove(index);
 
     }
@@ -113,9 +98,7 @@ public class TaskList {
 
             Integer index = Integer.valueOf(command.getArguments());
 
-
-            index--;
-            if(index>=tasks.size()||tasks.get(index) == null){
+            if(!tasks.containsKey(index)){
 
                 throw new IllegalArgumentException("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
 
@@ -145,8 +128,8 @@ public class TaskList {
 
     public void search(String subString){
 
-        tasks.stream()
-                .filter((t)->t.getDescription().lastIndexOf(subString)!=-1)
+        tasks.entrySet().stream()
+                .filter((t)->t.getValue().getDescription().lastIndexOf(subString)!=-1)
                 .forEach(TaskList::print_task);
 
     }
@@ -164,9 +147,7 @@ public class TaskList {
 
             Integer index = Integer.valueOf(args[0]);
 
-            index--;
-
-            if(index>=tasks.size()||tasks.get(index) == null){
+            if(!tasks.containsKey(index)){
 
                 throw new IllegalArgumentException("Incorrect index for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
 
