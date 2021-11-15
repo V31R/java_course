@@ -1,4 +1,5 @@
 package kalchenko.input_class;
+
 import kalchenko.command.*;
 
 import java.io.BufferedReader;
@@ -7,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 
 public final class TerminalReader {
+
 
     private static final BufferedReader  inputStream = new BufferedReader(new InputStreamReader(System.in));
 
@@ -47,6 +49,11 @@ public final class TerminalReader {
             throw new IllegalArgumentException("Incorrect command was entered!");
 
         }
+        if(!commandType.commandArgumentVerification(inputCommand)){
+
+            throw new IllegalArgumentException("Incorrect argument for " + commandType.name().toLowerCase(Locale.ROOT));
+
+        }
         result = new Command(commandType);
 
         if(inputCommand.length>1) {
@@ -57,7 +64,6 @@ public final class TerminalReader {
                 arguments.append(inputCommand[i]).append(" ");
 
             }
-
 
             result.setArguments(arguments.toString().trim());
 

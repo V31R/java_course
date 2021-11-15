@@ -6,6 +6,8 @@ import kalchenko.task.TaskList;
 
 import java.io.IOException;
 
+import kalchenko.logger.Logback;
+
 public class Controller {
 
     private static Controller instance;
@@ -48,6 +50,7 @@ public class Controller {
             catch (IllegalArgumentException | IOException illegalArgumentException){
 
                 System.out.println(illegalArgumentException.getMessage());
+                Logback.info("illegalArgumentException.getMessage()");
 
             }
 

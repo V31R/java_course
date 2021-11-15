@@ -11,7 +11,7 @@ public class TaskList {
 
     public TaskList() {
 
-        this.tasks = new LinkedHashMap<Integer, Task>();
+        this.tasks = new LinkedHashMap<>();
         this.current_id = 1;
     }
 
@@ -27,14 +27,9 @@ public class TaskList {
             case PRINT-> {
 
                 boolean isPrint = false;
-                if(command.getArguments()!=null && command.getArguments().equals("all")){
+                if(command.getArguments()!=null){
 
                     isPrint=true;
-
-                }
-                else if(command.getArguments()!=null){
-
-                    throw new IllegalArgumentException("Incorrect argument for " + command.getType().name().toLowerCase(Locale.ROOT));
 
                 }
 
@@ -44,7 +39,6 @@ public class TaskList {
             case SEARCH -> {
 
                 search(command.getArguments());
-
 
             }
             case TOGGLE, DELETE -> {
@@ -70,8 +64,9 @@ public class TaskList {
 
     public void print(boolean isPrint){
 
-        tasks.entrySet().stream().forEach(TaskList::print_task);
-
+        tasks.entrySet().stream()
+                .filter((t)->t.getValue().getState()||isPrint)
+                .forEach(TaskList::print_task);
 
     }
 
@@ -94,34 +89,25 @@ public class TaskList {
 
     private void toggleAndDeleteSwitch(Command command) throws NumberFormatException{
 
-        try {
+        Integer index = Integer.valueOf(command.getArguments());
 
-            Integer index = Integer.valueOf(command.getArguments());
+        if(!tasks.containsKey(index)){
 
-            if(!tasks.containsKey(index)){
-
-                throw new IllegalArgumentException("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
-
-            }
-
-            switch(command.getType()){
-                case TOGGLE -> {
-
-                    toggle(index);
-
-                }
-                case DELETE -> {
-
-                    delete(index);
-
-                }
-            }
+            throw new IllegalArgumentException("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
 
         }
-        catch (NumberFormatException e) {
 
-            throw new NumberFormatException("Incorrect argument for " + command.getType().name().toLowerCase(Locale.ROOT));
+        switch(command.getType()){
+            case TOGGLE -> {
 
+                toggle(index);
+
+            }
+            case DELETE -> {
+
+                delete(index);
+
+            }
         }
 
     }
@@ -138,37 +124,23 @@ public class TaskList {
 
         String[] args = arguments.split(" ");
 
-        if(args.length<2){
+        Integer index = Integer.valueOf(args[0]);
 
-            throw new IllegalArgumentException("Incorrect argument for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
+        if(!tasks.containsKey(index)){
 
-        }
-        try{
-
-            Integer index = Integer.valueOf(args[0]);
-
-            if(!tasks.containsKey(index)){
-
-                throw new IllegalArgumentException("Incorrect index for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
-
-            }
-
-
-            StringBuilder description= new StringBuilder("");
-            for(int i = 1; i < args.length; i++){
-
-                description.append(args[i]).append(" ");
-
-            }
-
-            tasks.get(index).setDescription(description.toString().trim());
+            throw new IllegalArgumentException("Incorrect index for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
 
         }
-        catch (NumberFormatException e) {
 
-            throw new NumberFormatException("Incorrect argument for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
+
+        StringBuilder description= new StringBuilder();
+        for(int i = 1; i < args.length; i++){
+
+            description.append(args[i]).append(" ");
 
         }
+
+        tasks.get(index).setDescription(description.toString().trim());
 
     }
 
