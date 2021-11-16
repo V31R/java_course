@@ -6,7 +6,10 @@ import org.slf4j.LoggerFactory;
 public class Logback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Logback.class);
+    Logback(){
 
+
+    }
     public static void debug(String message) {
 
         if(LOGGER.isDebugEnabled()){
