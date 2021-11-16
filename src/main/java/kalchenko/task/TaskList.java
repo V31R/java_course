@@ -1,10 +1,18 @@
 package kalchenko.task;
 import kalchenko.command.Command;
 import kalchenko.command.CommandType;
+import kalchenko.exception.ExceptionWithLogger;
+import kalchenko.output.ConsoleOutput;
+import kalchenko.exception.ExceptionMessage;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class TaskList {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskList.class);
 
     private int current_id;
     private LinkedHashMap<Integer, Task> tasks;
@@ -15,7 +23,7 @@ public class TaskList {
         this.current_id = 1;
     }
 
-    public  void performCommand(Command command) throws NumberFormatException{
+    public  void performCommand(Command command) throws ExceptionWithLogger {
 
         switch(command.getType()){
 
@@ -26,14 +34,7 @@ public class TaskList {
             }
             case PRINT-> {
 
-                boolean isPrint = false;
-                if(command.getArguments()!=null){
-
-                    isPrint=true;
-
-                }
-
-                print(isPrint);
+                print(command.getArguments() != null);
 
             }
             case SEARCH -> {
@@ -72,7 +73,13 @@ public class TaskList {
 
     static private void print_task(Map.Entry<Integer,Task> task){
 
-        System.out.printf("%d.[%c] %s \n", task.getKey(), task.getValue().getState()?'x':' ' ,task.getValue().getDescription());
+        StringBuilder stringBuilder=new StringBuilder(task.getKey().toString());
+        stringBuilder.append(". [")
+                .append(task.getValue().getState() ? "x" : " ")
+                .append("] ")
+                .append(task.getValue().getDescription())
+                .append("\n");
+        ConsoleOutput.output(stringBuilder.toString());
 
     }
 
@@ -87,13 +94,13 @@ public class TaskList {
 
     }
 
-    private void toggleAndDeleteSwitch(Command command) throws NumberFormatException{
+    private void toggleAndDeleteSwitch(Command command) throws ExceptionWithLogger {
 
         Integer index = Integer.valueOf(command.getArguments());
 
         if(!tasks.containsKey(index)){
 
-            throw new IllegalArgumentException("Incorrect index for " + command.getType().name().toLowerCase(Locale.ROOT));
+            throw new ExceptionWithLogger(ExceptionMessage.incorrectIndex(command.getType()), LOGGER);
 
         }
 
@@ -120,7 +127,7 @@ public class TaskList {
 
     }
 
-    public void edit(String arguments){
+    public void edit(String arguments) throws ExceptionWithLogger {
 
         String[] args = arguments.split(" ");
 
@@ -128,7 +135,7 @@ public class TaskList {
 
         if(!tasks.containsKey(index)){
 
-            throw new IllegalArgumentException("Incorrect index for " + CommandType.EDIT.name().toLowerCase(Locale.ROOT));
+            throw new ExceptionWithLogger(ExceptionMessage.incorrectIndex(CommandType.EDIT), LOGGER);
 
         }
 
