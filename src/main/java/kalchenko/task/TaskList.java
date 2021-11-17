@@ -1,9 +1,8 @@
 package kalchenko.task;
 import kalchenko.command.Command;
 import kalchenko.command.CommandType;
-import kalchenko.exception.ExceptionWithLogger;
 import kalchenko.output.ConsoleOutput;
-import kalchenko.exception.ExceptionMessage;
+import kalchenko.exception.ExceptionMessages;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,7 @@ import java.util.*;
 
 public class TaskList {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskList.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskList.class);
 
     private int current_id;
     private LinkedHashMap<Integer, Task> tasks;
@@ -23,7 +22,7 @@ public class TaskList {
         this.current_id = 1;
     }
 
-    public  void performCommand(Command command) throws ExceptionWithLogger {
+    public  void performCommand(Command command) throws IllegalArgumentException {
 
         switch(command.getType()){
 
@@ -79,7 +78,7 @@ public class TaskList {
                 .append("] ")
                 .append(task.getValue().getDescription())
                 .append("\n");
-        ConsoleOutput.output(stringBuilder.toString());
+        ConsoleOutput.getInstance().output(stringBuilder.toString());
 
     }
 
@@ -94,13 +93,14 @@ public class TaskList {
 
     }
 
-    private void toggleAndDeleteSwitch(Command command) throws ExceptionWithLogger {
+    private void toggleAndDeleteSwitch(Command command) throws IllegalArgumentException {
 
         Integer index = Integer.valueOf(command.getArguments());
 
         if(!tasks.containsKey(index)){
 
-            throw new ExceptionWithLogger(ExceptionMessage.incorrectIndex(command.getType()), LOGGER);
+            logger.error(ExceptionMessages.incorrectIndex(CommandType.EDIT));
+            throw new IllegalArgumentException(ExceptionMessages.incorrectIndex(CommandType.EDIT));
 
         }
 
@@ -127,7 +127,7 @@ public class TaskList {
 
     }
 
-    public void edit(String arguments) throws ExceptionWithLogger {
+    public void edit(String arguments) throws IllegalArgumentException {
 
         String[] args = arguments.split(" ");
 
@@ -135,7 +135,8 @@ public class TaskList {
 
         if(!tasks.containsKey(index)){
 
-            throw new ExceptionWithLogger(ExceptionMessage.incorrectIndex(CommandType.EDIT), LOGGER);
+            logger.error(ExceptionMessages.incorrectIndex(CommandType.EDIT));
+            throw new IllegalArgumentException(ExceptionMessages.incorrectIndex(CommandType.EDIT));
 
         }
 

@@ -1,16 +1,18 @@
 package kalchenko.program;
 
 import kalchenko.command.*;
-import kalchenko.exception.ExceptionWithLogger;
 import kalchenko.input_class.TerminalReader;
 import kalchenko.task.TaskList;
 
 import java.io.IOException;
 
-import kalchenko.logger.Logback;
 import kalchenko.output.ConsoleOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Controller {
+
+    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
     private static Controller instance;
 
@@ -49,18 +51,13 @@ public class Controller {
                 command=terminalReader.inputCommand();
 
             }
-            catch (ExceptionWithLogger exceptionWithLogger){
+            catch (IllegalArgumentException|IOException exception){
 
-                ConsoleOutput.output(exceptionWithLogger.getMessage());
-                Logback.error(exceptionWithLogger.getMessage(),exceptionWithLogger.getLogger());
-
-            }
-            catch (IOException ioException){
-
-                ConsoleOutput.output(ioException.getMessage());
-                Logback.error(ioException.getMessage());
+                ConsoleOutput.getInstance().output(exception.getMessage());
+                logger.error(exception.getMessage());
 
             }
+
 
             if(command!=null){
 
@@ -75,10 +72,10 @@ public class Controller {
                     taskList.performCommand(command);
 
                 }
-                catch (ExceptionWithLogger exceptionWithLogger){
+                catch (IllegalArgumentException illegalArgumentException){
 
-                    ConsoleOutput.output(exceptionWithLogger.getMessage());
-                    Logback.error(exceptionWithLogger.getMessage(),exceptionWithLogger.getLogger());
+                   ConsoleOutput.getInstance().output(illegalArgumentException.getMessage());
+                   logger.error(illegalArgumentException.getMessage());
 
                 }
 

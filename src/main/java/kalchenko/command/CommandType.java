@@ -113,27 +113,9 @@ public enum CommandType {
 
     };
 
-    public static CommandType getType(String string){
+    public static CommandType getType(String string) throws IllegalArgumentException, NullPointerException{
 
-        CommandType result = null;
-
-        try{
-
-            result=CommandType.valueOf(string);
-
-        }
-        catch(IllegalArgumentException illegalArgumentException){
-
-            return null;
-
-        }
-        catch(NullPointerException nullPointerException){
-
-            return null;
-
-        }
-
-        return result;
+       return CommandType.valueOf(string);
 
     }
 

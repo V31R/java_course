@@ -4,7 +4,7 @@ import kalchenko.command.CommandType;
 
 import java.util.Locale;
 
-public class ExceptionMessage {
+public class ExceptionMessages {
 
     public static String incorrectCommand(){
 
