@@ -1,14 +1,12 @@
 package kalchenko.output;
-import kalchenko.input_class.TerminalReader;
 
-import kalchenko.output.BaseOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class ConsoleOutput implements BaseOutput {
 
-    private static final Logger logger = LoggerFactory.getLogger(TerminalReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsoleOutput.class);
 
     private static ConsoleOutput instance;
 

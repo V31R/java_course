@@ -1,7 +1,5 @@
 package kalchenko.command;
 
-import java.util.Locale;
-
 public enum CommandType {
 
     ADD{
@@ -26,7 +24,7 @@ public enum CommandType {
 
         public boolean commandArgumentVerification(String[] arguments){
 
-            return arguments.length == 2;//command name and substring
+            return arguments.length >= 2;//command name and substring
 
         }
 
@@ -83,7 +81,7 @@ public enum CommandType {
 
         public boolean commandArgumentVerification(String[] arguments){
 
-            if(arguments.length == 3) {//command name, index and new name
+            if(arguments.length >= 3) {//command name, index and new name
 
                 try {
 
