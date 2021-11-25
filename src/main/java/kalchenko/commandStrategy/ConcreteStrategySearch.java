@@ -1,6 +1,7 @@
 package kalchenko.commandStrategy;
 
 import kalchenko.command.Command;
+import kalchenko.output.ConsoleOutput;
 import kalchenko.task.TaskList;
 
 public class ConcreteStrategySearch implements CommandStrategy{
@@ -10,7 +11,7 @@ public class ConcreteStrategySearch implements CommandStrategy{
 
         taskList.getTasks().entrySet().stream()
                 .filter((t)->t.getValue().getDescription().lastIndexOf(command.getArguments()) != -1)
-                .forEach(TaskList::print_task);
+                .forEach(ConsoleOutput::print_task);
 
     }
 

@@ -2,10 +2,8 @@ package kalchenko.commandStrategy;
 
 import kalchenko.command.Command;
 import kalchenko.exception.ExceptionMessages;
-import kalchenko.task.Task;
-import kalchenko.task.TaskList;
 
-import java.util.LinkedHashMap;
+import kalchenko.task.TaskList;
 
 public class ConcreteStrategyEdit implements  CommandStrategy{
 
@@ -16,9 +14,7 @@ public class ConcreteStrategyEdit implements  CommandStrategy{
 
         Integer index = Integer.valueOf(args[0]);
 
-        LinkedHashMap<Integer, Task> tasks = taskList.getTasks();
-
-        if(!tasks.containsKey(index)){
+        if(!taskList.getTasks().containsKey(index)){
 
             throw new IllegalArgumentException(ExceptionMessages.incorrectIndex(command.getType()));
 
@@ -32,8 +28,7 @@ public class ConcreteStrategyEdit implements  CommandStrategy{
 
         }
 
-        tasks.get(index).setDescription(description.toString().trim());
-        taskList.setTasks(tasks);
+        taskList.edit(index,description.toString().trim());
 
     }
 

@@ -1,7 +1,10 @@
 package kalchenko.output;
 
+import kalchenko.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 
 public class ConsoleOutput implements BaseOutput {
@@ -30,5 +33,18 @@ public class ConsoleOutput implements BaseOutput {
         logger.debug("Output: {}", message);
 
     }
+
+    static public void print_task(Map.Entry<Integer, Task> task){
+
+        StringBuilder stringBuilder=new StringBuilder(task.getKey().toString());
+        stringBuilder.append(". [")
+                .append(task.getValue().getState() ? "x" : " ")
+                .append("] ")
+                .append(task.getValue().getDescription())
+                .append("\n");
+        ConsoleOutput.getInstance().output(stringBuilder.toString());
+
+    }
+
 
 }

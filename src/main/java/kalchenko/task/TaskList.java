@@ -1,8 +1,6 @@
 package kalchenko.task;
 import kalchenko.command.Command;
 import kalchenko.commandStrategy.*;
-import kalchenko.output.ConsoleOutput;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,7 @@ public class TaskList {
     public TaskList() {
 
         this.tasks = new LinkedHashMap<>();
-        this.current_id = 0;
+        this.current_id = 1;
         commandContext=new CommandContext();
 
     }
@@ -53,27 +51,26 @@ public class TaskList {
 
     }
 
-    static public void print_task(Map.Entry<Integer,Task> task){
+    public void add(String description){
 
-        StringBuilder stringBuilder=new StringBuilder(task.getKey().toString());
-        stringBuilder.append(". [")
-                .append(task.getValue().getState() ? "x" : " ")
-                .append("] ")
-                .append(task.getValue().getDescription())
-                .append("\n");
-        ConsoleOutput.getInstance().output(stringBuilder.toString());
+        tasks.put(current_id++,new Task(description));
 
     }
 
-    public int getCurrent_id() {
+    public void toggle(int index){
 
-        return current_id;
+        tasks.get(index).toggleState();
+
+    }
+    public void delete(int index){
+
+        tasks.remove(index);
 
     }
 
-    public void setCurrent_id(int current_id) {
+    public void edit(Integer index, String newDescription){
 
-        this.current_id = current_id;
+        tasks.get(index).setDescription(newDescription);
 
     }
 
@@ -83,10 +80,5 @@ public class TaskList {
 
     }
 
-    public void setTasks(LinkedHashMap<Integer, Task> tasks) {
-
-        this.tasks = tasks;
-
-    }
 
 }
