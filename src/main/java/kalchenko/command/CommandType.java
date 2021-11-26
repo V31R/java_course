@@ -1,7 +1,5 @@
 package kalchenko.command;
 
-import java.util.Locale;
-
 public enum CommandType {
 
     ADD{
@@ -26,7 +24,7 @@ public enum CommandType {
 
         public boolean commandArgumentVerification(String[] arguments){
 
-            return arguments.length == 2;//command name and substring
+            return arguments.length >= 2;//command name and substring
 
         }
 
@@ -83,7 +81,7 @@ public enum CommandType {
 
         public boolean commandArgumentVerification(String[] arguments){
 
-            if(arguments.length == 3) {//command name, index and new name
+            if(arguments.length >= 3) {//command name, index and new name
 
                 try {
 
@@ -113,13 +111,31 @@ public enum CommandType {
 
     };
 
-    public static CommandType getType(String string) throws IllegalArgumentException, NullPointerException{
+    public static CommandType getType(String string){
 
-       return CommandType.valueOf(string);
+        CommandType result = null;
+
+        for(CommandType commandType: CommandType.values()){
+
+            if(commandType.equals(string)){
+
+                result = commandType;
+
+            }
+
+        }
+
+        return result;
 
     }
 
     public abstract boolean commandArgumentVerification(String[] arguments);
+
+    public boolean equals(String string){
+
+        return this.name().equals(string);
+
+    }
 
 }
 
