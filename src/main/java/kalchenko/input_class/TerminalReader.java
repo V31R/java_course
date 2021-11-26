@@ -1,13 +1,16 @@
 package kalchenko.input_class;
+import kalchenko.CommandChain.BaseHandler;
+import kalchenko.CommandChain.EndCommandChain;
+import kalchenko.CommandChain.ValidateCommandArgsHandler;
+import kalchenko.CommandChain.ValidateCommandTypeHandler;
 import kalchenko.command.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Locale;
 
-import kalchenko.exception.ExceptionMessages;
-
+import kalchenko.output.ConsoleOutput;
+import kalchenko.program.TaskListController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +23,22 @@ public final class TerminalReader {
 
     private static TerminalReader instance;
 
-    private TerminalReader()
-    {}
+    private static BaseHandler[] handlers;
+
+    private TerminalReader() {
+
+        handlers=new BaseHandler[3];
+
+        handlers[2] = new EndCommandChain();
+
+        handlers[1] = new ValidateCommandArgsHandler();
+        handlers[1].setNext(handlers[2]);
+
+        handlers[0] = new ValidateCommandTypeHandler();
+        handlers[0].setNext(handlers[1]);
+
+
+    }
 
     public static TerminalReader getInstance(){
 
@@ -35,9 +52,9 @@ public final class TerminalReader {
 
     }
 
-    public Command inputCommand() throws IllegalArgumentException, IOException {
+    public Command inputCommand() throws IOException {
 
-        Command result;
+        Command result=new Command();
         String[] inputCommand;
         {
 
@@ -46,45 +63,58 @@ public final class TerminalReader {
             inputCommand=string.split(" ");
 
         }
-        String commandName = inputCommand[0];
-        commandName=commandName.trim();
-        commandName = commandName.toUpperCase(Locale.ROOT);
+        result.setArguments(inputCommand, true);
+        return result;
 
-        CommandType commandType;
-        try{
+    }
 
-            commandType = CommandType.getType(commandName);
+    public Command getValidatedCommand(Command command)  throws IllegalArgumentException, IOException{
 
-        }
-        catch(IllegalArgumentException | NullPointerException exception ){
+        return handlers[0].handle(command);
 
-            logger.error("{} With exception '{}'",ExceptionMessages.incorrectCommand(), exception.getMessage());
-            throw new IllegalArgumentException(ExceptionMessages.incorrectCommand());
+    }
 
-        }
+    public void execute(){
 
-        if(!commandType.commandArgumentVerification(inputCommand)){
+        boolean open = true;
 
-            logger.error(ExceptionMessages.incorrectArgument(commandType));
-            throw new IllegalArgumentException(ExceptionMessages.incorrectArgument(commandType));
+        while(open){
 
-        }
-        result = new Command(commandType);
+            Command command=null;
 
-        if(inputCommand.length > 1) {
+            try{
 
-            StringBuilder arguments = new StringBuilder("");
-            for(int i=1; i < inputCommand.length;i++){
+                command=getValidatedCommand(inputCommand());
 
-                arguments.append(inputCommand[i]).append(" ");
+            }
+            catch (IOException | IllegalArgumentException exception){
+
+                ConsoleOutput.getInstance().output(exception.getMessage());
+                logger.error(exception.getMessage());
+                continue;
 
             }
 
-            result.setArguments(arguments.toString().trim());
+
+            if(command.getType()==CommandType.QUIT){
+
+                open = false;
+
+            }
+
+            try {
+
+                TaskListController.getInstance().performCommand(command);
+
+            }
+            catch (IllegalArgumentException illegalArgumentException){
+
+                ConsoleOutput.getInstance().output(illegalArgumentException.getMessage());
+                logger.error(illegalArgumentException.getMessage());
+
+            }
 
         }
-
-        return result;
 
     }
 

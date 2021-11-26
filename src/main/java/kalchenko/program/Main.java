@@ -1,12 +1,14 @@
 package kalchenko.program;
 
+import kalchenko.input_class.TerminalReader;
+
 public class Main {
 
     public static  void  main(String[] avgs){
 
-        Controller controller=Controller.getInstance();
+        TerminalReader terminalReader=TerminalReader.getInstance();
 
-        controller.execute();
+        terminalReader.execute();
 
     }
 

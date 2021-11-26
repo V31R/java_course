@@ -111,13 +111,31 @@ public enum CommandType {
 
     };
 
-    public static CommandType getType(String string) throws IllegalArgumentException, NullPointerException{
+    public static CommandType getType(String string){
 
-       return CommandType.valueOf(string);
+        CommandType result = null;
+
+        for(CommandType commandType: CommandType.values()){
+
+            if(commandType.equals(string)){
+
+                result = commandType;
+
+            }
+
+        }
+
+        return result;
 
     }
 
     public abstract boolean commandArgumentVerification(String[] arguments);
+
+    public boolean equals(String string){
+
+        return this.name().equals(string);
+
+    }
 
 }
 
