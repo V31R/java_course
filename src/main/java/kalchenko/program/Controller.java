@@ -1,6 +1,7 @@
 package kalchenko.program;
 
 import kalchenko.command.*;
+import kalchenko.commandStrategy.*;
 import kalchenko.input_class.TerminalReader;
 import kalchenko.task.TaskList;
 
@@ -19,10 +20,13 @@ public class Controller {
     private TaskList taskList;
     private TerminalReader terminalReader;
 
+    private CommandContext commandContext;
+
     private Controller() {
 
         terminalReader=TerminalReader.getInstance();
         taskList= new TaskList();
+        commandContext=new CommandContext();
 
     }
 
@@ -44,7 +48,7 @@ public class Controller {
 
         while(open){
 
-            Command command=null;
+            Command command;
 
             try{
 
@@ -55,34 +59,47 @@ public class Controller {
 
                 ConsoleOutput.getInstance().output(exception.getMessage());
                 logger.error(exception.getMessage());
+                continue;
 
             }
 
+            if(command.getType()==CommandType.QUIT){
 
-            if(command!=null){
+                open = false;
 
-                if(command.getType()==CommandType.QUIT){
+            }
 
-                    open = false;
+            try {
 
-                }
+                performCommand(taskList, command);
 
-                try {
+            }
+            catch (IllegalArgumentException illegalArgumentException){
 
-                    taskList.performCommand(command);
-
-                }
-                catch (IllegalArgumentException illegalArgumentException){
-
-                   ConsoleOutput.getInstance().output(illegalArgumentException.getMessage());
-                   logger.error(illegalArgumentException.getMessage());
-
-                }
-
+                ConsoleOutput.getInstance().output(illegalArgumentException.getMessage());
+                logger.error(illegalArgumentException.getMessage());
 
             }
 
         }
+
+    }
+
+    private void performCommand(TaskList taskList, Command command) throws IllegalArgumentException{
+
+        switch(command.getType()){
+
+            case ADD -> commandContext.setStrategy(new ConcreteStrategyAdd());
+            case PRINT->  commandContext.setStrategy(new ConcreteStrategyPrint());
+            case SEARCH ->  commandContext.setStrategy(new ConcreteStrategySearch());
+            case TOGGLE ->  commandContext.setStrategy(new ConcreteStrategyToggle());
+            case DELETE ->  commandContext.setStrategy(new ConcreteStrategyDelete());
+            case EDIT ->  commandContext.setStrategy(new ConcreteStrategyEdit());
+            case QUIT -> { return; }
+
+        }
+
+        commandContext.execute(taskList, command);
 
     }
 

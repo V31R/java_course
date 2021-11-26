@@ -37,7 +37,7 @@ public final class TerminalReader {
 
     public Command inputCommand() throws IllegalArgumentException, IOException {
 
-        Command result = null;
+        Command result;
         String[] inputCommand;
         {
 
@@ -52,7 +52,9 @@ public final class TerminalReader {
 
         CommandType commandType;
         try{
+
             commandType = CommandType.getType(commandName);
+
         }
         catch(IllegalArgumentException | NullPointerException exception ){
 
@@ -60,6 +62,7 @@ public final class TerminalReader {
             throw new IllegalArgumentException(ExceptionMessages.incorrectCommand());
 
         }
+
         if(!commandType.commandArgumentVerification(inputCommand)){
 
             logger.error(ExceptionMessages.incorrectArgument(commandType));
