@@ -10,22 +10,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import kalchenko.output.ConsoleOutput;
-import kalchenko.program.TaskListController;
+import kalchenko.task.TaskListController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public final class TerminalReader {
 
     private static final Logger logger = LoggerFactory.getLogger(TerminalReader.class);
 
     private static final BufferedReader  inputStream = new BufferedReader(new InputStreamReader(System.in));
 
-    private static TerminalReader instance;
+    //private static TerminalReader instance;
 
     private static BaseHandler[] handlers;
 
-    private TerminalReader() {
+   public TerminalReader() {
 
         handlers=new BaseHandler[3];
 
@@ -40,17 +43,17 @@ public final class TerminalReader {
 
     }
 
-    public static TerminalReader getInstance(){
+    //public static TerminalReader getInstance(){
 
-        if(instance==null){
+       // if(instance==null){
 
-            instance= new TerminalReader();
+            //instance= new TerminalReader();
 
-        }
+        //}
 
-        return instance;
+       // return instance;
 
-    }
+    //}
 
     public Command inputCommand() throws IOException {
 
@@ -76,6 +79,8 @@ public final class TerminalReader {
 
     public void execute(){
 
+        ApplicationContext context = new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
+        ConsoleOutput consoleOutput = context.getBean("ConsoleOutput",ConsoleOutput.class);
         boolean open = true;
 
         while(open){
@@ -89,7 +94,7 @@ public final class TerminalReader {
             }
             catch (IOException | IllegalArgumentException exception){
 
-                ConsoleOutput.getInstance().output(exception.getMessage());
+                consoleOutput.output(exception.getMessage());
                 logger.error(exception.getMessage());
                 continue;
 
@@ -104,12 +109,12 @@ public final class TerminalReader {
 
             try {
 
-                TaskListController.getInstance().performCommand(command);
+                context.getBean("TaskListController",TaskListController.class).performCommand(command);
 
             }
             catch (IllegalArgumentException illegalArgumentException){
 
-                ConsoleOutput.getInstance().output(illegalArgumentException.getMessage());
+                consoleOutput.output(illegalArgumentException.getMessage());
                 logger.error(illegalArgumentException.getMessage());
 
             }
