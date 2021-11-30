@@ -20,7 +20,8 @@ public class Main implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        ApplicationContext context= new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
+        ApplicationContext context =
+                new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
 
         TerminalReader terminalReader=context.getBean("TerminalReader",TerminalReader.class);
 

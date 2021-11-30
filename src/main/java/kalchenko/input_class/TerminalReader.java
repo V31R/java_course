@@ -15,16 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+
+@Component
 public final class TerminalReader {
 
     private static final Logger logger = LoggerFactory.getLogger(TerminalReader.class);
 
     private static final BufferedReader  inputStream = new BufferedReader(new InputStreamReader(System.in));
-
-    //private static TerminalReader instance;
 
     private static BaseHandler[] handlers;
 
@@ -40,20 +39,7 @@ public final class TerminalReader {
         handlers[0] = new ValidateCommandTypeHandler();
         handlers[0].setNext(handlers[1]);
 
-
     }
-
-    //public static TerminalReader getInstance(){
-
-       // if(instance==null){
-
-            //instance= new TerminalReader();
-
-        //}
-
-       // return instance;
-
-    //}
 
     public Command inputCommand() throws IOException {
 
@@ -79,7 +65,8 @@ public final class TerminalReader {
 
     public void execute(){
 
-        ApplicationContext context = new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
+        ApplicationContext context =
+                new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
         ConsoleOutput consoleOutput = context.getBean("ConsoleOutput",ConsoleOutput.class);
         boolean open = true;
 

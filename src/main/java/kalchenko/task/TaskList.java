@@ -1,8 +1,11 @@
 package kalchenko.task;
 
 
+import org.springframework.stereotype.Component;
+
 import java.util.*;
 
+@Component
 public class TaskList {
 
     private int current_id;

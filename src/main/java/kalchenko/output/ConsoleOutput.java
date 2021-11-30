@@ -5,12 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 
-@Service
+@Component
 public class ConsoleOutput implements BaseOutput {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsoleOutput.class);
@@ -39,6 +39,5 @@ public class ConsoleOutput implements BaseOutput {
         context.getBean("ConsoleOutput",ConsoleOutput.class).output(stringBuilder.toString());
 
     }
-
 
 }
