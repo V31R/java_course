@@ -1,6 +1,5 @@
 package kalchenko.task;
 
-
 import java.util.*;
 
 public class TaskList {

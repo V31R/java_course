@@ -1,12 +1,31 @@
 package kalchenko.program;
 
 import kalchenko.input_class.TerminalReader;
+import kalchenko.task.TaskListController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-public class Main {
 
-    public static  void  main(String[] avgs){
+@SpringBootApplication
+public class Main implements CommandLineRunner {
 
-        TerminalReader terminalReader=TerminalReader.getInstance();
+    public static  void  main(String[] args){
+
+        SpringApplication.run(Main.class,args);
+
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+
+        ApplicationContext context =
+                new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
+
+        TerminalReader terminalReader=context.getBean("terminalReader",TerminalReader.class);
 
         terminalReader.execute();
 
