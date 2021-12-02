@@ -13,8 +13,7 @@ import kalchenko.output.ConsoleOutput;
 import kalchenko.task.TaskListController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -27,7 +26,10 @@ public final class TerminalReader {
 
     private static BaseHandler[] handlers;
 
-   public TerminalReader() {
+    @Autowired
+    private TaskListController taskListController;
+
+    public TerminalReader() {
 
         handlers=new BaseHandler[3];
 
@@ -65,9 +67,6 @@ public final class TerminalReader {
 
     public void execute(){
 
-        ApplicationContext context =
-                new FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
-        ConsoleOutput consoleOutput = context.getBean("ConsoleOutput",ConsoleOutput.class);
         boolean open = true;
 
         while(open){
@@ -81,7 +80,7 @@ public final class TerminalReader {
             }
             catch (IOException | IllegalArgumentException exception){
 
-                consoleOutput.output(exception.getMessage());
+                ConsoleOutput.output(exception.getMessage());
                 logger.error(exception.getMessage());
                 continue;
 
@@ -96,12 +95,12 @@ public final class TerminalReader {
 
             try {
 
-                context.getBean("TaskListController",TaskListController.class).performCommand(command);
+               taskListController.performCommand(command);
 
             }
             catch (IllegalArgumentException illegalArgumentException){
 
-                consoleOutput.output(illegalArgumentException.getMessage());
+                ConsoleOutput.output(illegalArgumentException.getMessage());
                 logger.error(illegalArgumentException.getMessage());
 
             }

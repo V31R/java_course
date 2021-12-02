@@ -3,22 +3,15 @@ package kalchenko.output;
 import kalchenko.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 
-@Component
-public class ConsoleOutput implements BaseOutput {
+public class ConsoleOutput{
 
     private static final Logger logger = LoggerFactory.getLogger(ConsoleOutput.class);
 
-    public ConsoleOutput()
-    {}
-
-    public void output(String message){
+    public static void output(String message){
 
         System.out.println(message);
         logger.debug("Output: {}", message);
@@ -34,9 +27,7 @@ public class ConsoleOutput implements BaseOutput {
                 .append(task.getValue().getDescription())
                 .append("\n");
 
-        ApplicationContext context = new
-                FileSystemXmlApplicationContext("src\\main\\resources\\application-beans.xml");
-        context.getBean("ConsoleOutput",ConsoleOutput.class).output(stringBuilder.toString());
+        ConsoleOutput.output(stringBuilder.toString());
 
     }
 
