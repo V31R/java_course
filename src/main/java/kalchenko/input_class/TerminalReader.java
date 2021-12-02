@@ -10,22 +10,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import kalchenko.output.ConsoleOutput;
-import kalchenko.program.TaskListController;
+import kalchenko.task.TaskListController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public final class TerminalReader {
 
     private static final Logger logger = LoggerFactory.getLogger(TerminalReader.class);
 
     private static final BufferedReader  inputStream = new BufferedReader(new InputStreamReader(System.in));
 
-    private static TerminalReader instance;
-
     private static BaseHandler[] handlers;
 
-    private TerminalReader() {
+    @Autowired
+    private TaskListController taskListController;
+
+    public TerminalReader() {
 
         handlers=new BaseHandler[3];
 
@@ -36,19 +40,6 @@ public final class TerminalReader {
 
         handlers[0] = new ValidateCommandTypeHandler();
         handlers[0].setNext(handlers[1]);
-
-
-    }
-
-    public static TerminalReader getInstance(){
-
-        if(instance==null){
-
-            instance= new TerminalReader();
-
-        }
-
-        return instance;
 
     }
 
@@ -89,7 +80,7 @@ public final class TerminalReader {
             }
             catch (IOException | IllegalArgumentException exception){
 
-                ConsoleOutput.getInstance().output(exception.getMessage());
+                ConsoleOutput.output(exception.getMessage());
                 logger.error(exception.getMessage());
                 continue;
 
@@ -104,12 +95,12 @@ public final class TerminalReader {
 
             try {
 
-                TaskListController.getInstance().performCommand(command);
+               taskListController.performCommand(command);
 
             }
             catch (IllegalArgumentException illegalArgumentException){
 
-                ConsoleOutput.getInstance().output(illegalArgumentException.getMessage());
+                ConsoleOutput.output(illegalArgumentException.getMessage());
                 logger.error(illegalArgumentException.getMessage());
 
             }

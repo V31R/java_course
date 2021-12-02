@@ -1,36 +1,21 @@
-package kalchenko.program;
+package kalchenko.task;
 
 import kalchenko.command.*;
 import kalchenko.commandStrategy.*;
-import kalchenko.input_class.TerminalReader;
-import kalchenko.task.TaskList;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class TaskListController {
 
-    private static TaskListController instance;
-
     private TaskList taskList;
-    private TerminalReader terminalReader;
 
     private CommandContext commandContext;
 
     private TaskListController() {
 
-        terminalReader=TerminalReader.getInstance();
         taskList= new TaskList();
         commandContext=new CommandContext();
-
-    }
-
-    public static TaskListController getInstance(){
-
-        if(instance==null){
-
-            instance= new TaskListController();
-
-        }
-
-        return instance;
 
     }
 

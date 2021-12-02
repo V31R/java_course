@@ -7,27 +7,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 
-public class ConsoleOutput implements BaseOutput {
+public class ConsoleOutput{
 
     private static final Logger logger = LoggerFactory.getLogger(ConsoleOutput.class);
 
-    private static ConsoleOutput instance;
-
-    private ConsoleOutput()
-    {}
-
-    public static ConsoleOutput getInstance(){
-
-        if(instance==null){
-
-            instance= new ConsoleOutput();
-
-        }
-
-        return instance;
-
-    }
-    public void output(String message){
+    public static void output(String message){
 
         System.out.println(message);
         logger.debug("Output: {}", message);
@@ -42,9 +26,9 @@ public class ConsoleOutput implements BaseOutput {
                 .append("] ")
                 .append(task.getValue().getDescription())
                 .append("\n");
-        ConsoleOutput.getInstance().output(stringBuilder.toString());
+
+       output(stringBuilder.toString());
 
     }
-
 
 }
