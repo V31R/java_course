@@ -27,7 +27,7 @@ public class ConsoleOutput{
                 .append(task.getValue().getDescription())
                 .append("\n");
 
-        ConsoleOutput.output(stringBuilder.toString());
+       output(stringBuilder.toString());
 
     }
 
