@@ -1,26 +1,32 @@
 package kalchenko.task;
 
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
+@Service
 public class TaskList {
 
     private int current_id;
 
-    private LinkedHashMap<Integer, Task> tasks;
+    //private LinkedHashMap<Integer, Task> tasks;
 
+    private List<Task> tasks;
 
     public TaskList() {
 
-        this.tasks = new LinkedHashMap<>();
+        this.tasks = new ArrayList<Task>();
         this.current_id = 1;
 
     }
 
     public void add(String description){
 
-        tasks.put(current_id++,new Task(description));
+        tasks.add(new Task(current_id++,description));
+        //tasks.put(current_id++,new Task(description));
 
     }
+
 
     public void toggle(int index){
 
@@ -29,7 +35,9 @@ public class TaskList {
     }
     public void delete(int index){
 
-        tasks.remove(index);
+        //Task toDelete=tasks.stream().findFirst().filter((t)->t.getId()==index).get();
+
+        tasks.removeIf((t)->t.getId()==index);
 
     }
 
@@ -39,11 +47,10 @@ public class TaskList {
 
     }
 
-    public LinkedHashMap<Integer, Task> getTasks() {
+    public List<Task> getTasks() {
 
         return tasks;
 
     }
-
 
 }
