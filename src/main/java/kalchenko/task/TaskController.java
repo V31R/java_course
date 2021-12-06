@@ -4,15 +4,11 @@ import kalchenko.output.ConsoleOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 @RestController
 public class TaskController {
 
-
-    //private final TaskRepository repository;
     private final TaskList taskList;
     @Autowired
     public TaskController(TaskList taskList) {
@@ -47,7 +43,10 @@ public class TaskController {
     @GetMapping("/tasks/{id}")
     Task task(@PathVariable Integer id){
 
-        return taskList.getTasks().get(id);
+        return taskList.getTasks().stream()
+                .filter((t)->t.getId()==id.intValue())
+                .findFirst()
+                .get();
 
     }
 
@@ -65,6 +64,7 @@ public class TaskController {
         if(task.getState()) {
 
             taskList.toggle(task.getId());
+
         }
 
         taskList.edit(task.getId(), task.getDescription());

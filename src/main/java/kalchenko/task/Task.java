@@ -2,41 +2,40 @@ package kalchenko.task;
 
 public class Task {
 
-
-
-    private Integer id;
+    private int id;
 
     private boolean state = false;
 
     private String description;
 
-    public Task(Integer id,boolean state,String description) {
+    public Task(){}
+
+    public Task(int id, boolean state,String description) {
+
+        this.id=id;
 
         this.description = description;
 
     }
 
-    public Task(Integer id,String description) {
+    public Task(int id,String description) {
 
+        this.id=id;
         this.description = description;
 
     }
 
-    public Task(String description) {
 
-        this.description = description;
+    public int getId() {
 
-    }
-    public Integer getId() {
         return id;
+
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public void setId(int id) {
 
-    public Task(Integer id) {
         this.id = id;
+
     }
 
     public void setState(boolean state) {
