@@ -1,5 +1,6 @@
 package kalchenko.task;
 
+import kalchenko.exception.TaskNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,6 @@ public class TaskController {
     public TaskController(TaskList taskList) {
 
         this.taskList = taskList;
-        this.taskList.add("New Task");
 
     }
 
@@ -29,6 +29,7 @@ public class TaskController {
 
         taskList.add(task.getDescription());
         return task;
+
     }
 
     @PostMapping("/tasks/{description}")
@@ -36,6 +37,7 @@ public class TaskController {
 
         taskList.add(description);
         return description;
+
     }
 
 
@@ -43,9 +45,8 @@ public class TaskController {
     Task task(@PathVariable Integer id){
 
         return taskList.getTasks().stream()
-                .filter((t)->t.getId()==id.intValue())
-                .findFirst()
-                .get();
+                .filter((t)->t.getId()==id)
+                .findFirst().orElseThrow(()->new TaskNotFoundException(id));
 
     }
 
@@ -68,4 +69,5 @@ public class TaskController {
         taskList.edit(task.getId(), task.getDescription());
 
     }
+
 }

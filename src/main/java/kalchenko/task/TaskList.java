@@ -1,5 +1,6 @@
 package kalchenko.task;
 
+import kalchenko.exception.TaskNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public class TaskList {
         tasks.stream()
                 .filter((t)->t.getId()==index)
                 .findFirst()
-                .get()
+                .orElseThrow(()->new TaskNotFoundException(index))
                 .toggleState();
 
     }
@@ -44,7 +45,7 @@ public class TaskList {
 
         tasks.stream()
                 .filter((t)->t.getId()==index).findFirst()
-                .get()
+                .orElseThrow(()->new TaskNotFoundException(index))
                 .setDescription(newDescription);
 
     }
