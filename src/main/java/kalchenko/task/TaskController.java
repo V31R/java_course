@@ -11,9 +11,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Validated
 @RestController
 @RequestMapping("/tasks")
+@Validated
 public class TaskController {
 
     private final TaskList taskList;

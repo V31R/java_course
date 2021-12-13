@@ -1,8 +1,11 @@
 package kalchenko.task;
 
+import org.springframework.validation.annotation.Validated;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+@Validated
 public class Task {
 
     @Min(1)

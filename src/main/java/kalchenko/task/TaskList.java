@@ -2,10 +2,12 @@ package kalchenko.task;
 
 import kalchenko.exception.TaskNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
 
 @Service
+@Validated
 public class TaskList {
 
     private int current_id;
