@@ -1,11 +1,16 @@
 package kalchenko.task;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 public class Task {
 
+    @Min(1)
     private int id;
 
     private boolean state = false;
 
+    @NotBlank
     private String description;
 
     public Task(){}

@@ -2,10 +2,16 @@ package kalchenko.task;
 
 import kalchenko.exception.TaskNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
@@ -26,7 +32,7 @@ public class TaskController {
     }
 
     @PostMapping("/{description}")
-    private void newTask(@PathVariable  String description){
+    private void newTask(@PathVariable("description") @NotBlank String description){
 
         taskList.add(description);
 
@@ -34,21 +40,21 @@ public class TaskController {
 
 
     @GetMapping("/{id}")
-    private Task getTask(@PathVariable Integer id){
-
+    private Task getTask(@PathVariable("id") @Min(1) Integer id){
+        ResponseEntity.ok();
         return taskList.getById(id);
 
     }
 
     @DeleteMapping("/{id}")
-    private void deleteTask(@PathVariable Integer id){
+    private void deleteTask(@PathVariable("id") @Min(1) Integer id){
 
         taskList.delete(id);
 
     }
 
     @PatchMapping("/{id}")
-    private void editToggleTask(@PathVariable Integer id,@RequestBody Task task){
+    private void editToggleTask(@PathVariable("id") @Min(1) Integer id, @Valid @RequestBody Task task){
 
         if(task.getState() ^ taskList.getById(id).getState()) {
 
