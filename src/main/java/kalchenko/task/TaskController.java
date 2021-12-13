@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
 
     private final TaskList taskList;
@@ -17,56 +18,45 @@ public class TaskController {
 
     }
 
-    @GetMapping("/tasks")
-    List<Task> getList(){
+    @GetMapping("")
+    private List<Task> getList(){
 
         return taskList.getTasks();
 
     }
 
-    @PostMapping("/tasks")
-    Task newTask(@RequestBody  Task task){
-
-        taskList.add(task.getDescription());
-        return task;
-
-    }
-
-    @PostMapping("/tasks/{description}")
-    String newTask(@PathVariable  String description){
+    @PostMapping("/{description}")
+    private void newTask(@PathVariable  String description){
 
         taskList.add(description);
-        return description;
 
     }
 
 
-    @GetMapping("/tasks/{id}")
-    Task task(@PathVariable Integer id){
+    @GetMapping("/{id}")
+    private Task getTask(@PathVariable Integer id){
 
-        return taskList.getTasks().stream()
-                .filter((t)->t.getId()==id)
-                .findFirst().orElseThrow(()->new TaskNotFoundException(id));
+        return taskList.getById(id);
 
     }
 
-    @DeleteMapping("/tasks/{id}")
-    void deleteTask(@PathVariable Integer id){
+    @DeleteMapping("/{id}")
+    private void deleteTask(@PathVariable Integer id){
 
         taskList.delete(id);
 
     }
 
-    @PutMapping("/tasks")
-    void editToggleTask(@RequestBody Task task){
+    @PatchMapping("/{id}")
+    private void editToggleTask(@PathVariable Integer id,@RequestBody Task task){
 
-        if(task.getState()) {
+        if(task.getState() ^ taskList.getById(id).getState()) {
 
-            taskList.toggle(task.getId());
+            taskList.toggle(id);
 
         }
 
-        taskList.edit(task.getId(), task.getDescription());
+        taskList.edit(id, task.getDescription());
 
     }
 

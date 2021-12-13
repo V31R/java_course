@@ -19,6 +19,13 @@ public class TaskList {
 
     }
 
+    public Task getById(int index) {
+        return tasks.stream()
+                .filter((t)->t.getId()==index)
+                .findFirst()
+                .orElseThrow(()->new TaskNotFoundException(index));
+    }
+
     public void add(String description){
 
         tasks.add(new Task(current_id++,description));
@@ -28,11 +35,7 @@ public class TaskList {
 
     public void toggle(int index){
 
-        tasks.stream()
-                .filter((t)->t.getId()==index)
-                .findFirst()
-                .orElseThrow(()->new TaskNotFoundException(index))
-                .toggleState();
+        this.getById(index).toggleState();
 
     }
     public void delete(int index){
@@ -43,10 +46,7 @@ public class TaskList {
 
     public void edit(Integer index, String newDescription){
 
-        tasks.stream()
-                .filter((t)->t.getId()==index).findFirst()
-                .orElseThrow(()->new TaskNotFoundException(index))
-                .setDescription(newDescription);
+        this.getById(index).setDescription(newDescription);
 
     }
 

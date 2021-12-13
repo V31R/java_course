@@ -10,14 +10,6 @@ public class Task {
 
     public Task(){}
 
-    public Task(int id, boolean state,String description) {
-
-        this.id=id;
-
-        this.description = description;
-
-    }
-
     public Task(int id,String description) {
 
         this.id=id;
