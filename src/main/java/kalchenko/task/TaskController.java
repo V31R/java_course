@@ -1,14 +1,13 @@
 package kalchenko.task;
 
-import kalchenko.exception.TaskNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -25,14 +24,14 @@ public class TaskController {
     }
 
     @GetMapping("")
-    private List<Task> getList(){
+    public List<Task> getList(){
 
         return taskList.getTasks();
 
     }
 
     @PostMapping("/{description}")
-    private void newTask(@PathVariable("description") @NotBlank String description){
+    public void newTask(@PathVariable("description") @NotBlank String description){
 
         taskList.add(description);
 
@@ -40,21 +39,21 @@ public class TaskController {
 
 
     @GetMapping("/{id}")
-    private Task getTask(@PathVariable("id") @Min(1) Integer id){
-        ResponseEntity.ok();
+    public Task getTask(@PathVariable("id") @Min(1) Integer id){
+
         return taskList.getById(id);
 
     }
 
     @DeleteMapping("/{id}")
-    private void deleteTask(@PathVariable("id") @Min(1) Integer id){
+    public void deleteTask(@PathVariable("id") @Min(1) Integer id){
 
         taskList.delete(id);
 
     }
 
     @PatchMapping("/{id}")
-    private void editToggleTask(@PathVariable("id") @Min(1) Integer id, @Valid @RequestBody Task task){
+    public void editToggleTask(@PathVariable("id") @Min (1) Integer id, @RequestBody @Valid @NotNull Task task){
 
         if(task.getState() ^ taskList.getById(id).getState()) {
 
