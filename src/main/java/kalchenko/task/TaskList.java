@@ -1,49 +1,59 @@
 package kalchenko.task;
 
+import kalchenko.exception.TaskNotFoundException;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
+@Service
 public class TaskList {
 
     private int current_id;
 
-    private LinkedHashMap<Integer, Task> tasks;
-
+    private List<Task> tasks;
 
     public TaskList() {
 
-        this.tasks = new LinkedHashMap<>();
+        this.tasks = new ArrayList<Task>();
         this.current_id = 1;
 
     }
 
+    public Task getById(int index) {
+        return tasks.stream()
+                .filter((t)->t.getId()==index)
+                .findFirst()
+                .orElseThrow(()->new TaskNotFoundException(index));
+    }
+
     public void add(String description){
 
-        tasks.put(current_id++,new Task(description));
+        tasks.add(new Task(current_id++,description));
 
     }
 
+
     public void toggle(int index){
 
-        tasks.get(index).toggleState();
+        this.getById(index).toggleState();
 
     }
     public void delete(int index){
 
-        tasks.remove(index);
+        tasks.removeIf((t)->t.getId()==index);
 
     }
 
     public void edit(Integer index, String newDescription){
 
-        tasks.get(index).setDescription(newDescription);
+        this.getById(index).setDescription(newDescription);
 
     }
 
-    public LinkedHashMap<Integer, Task> getTasks() {
+    public List<Task> getTasks() {
 
         return tasks;
 
     }
-
 
 }
