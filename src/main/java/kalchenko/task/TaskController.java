@@ -1,6 +1,5 @@
 package kalchenko.task;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,53 +14,48 @@ import java.util.List;
 @Validated
 public class TaskController {
 
-    private final TaskList taskList;
-    @Autowired
-    public TaskController(TaskList taskList) {
+    private final TaskRepository taskRepository;
 
-        this.taskList = taskList;
+    public TaskController(TaskRepository taskRepository) {
+
+        this.taskRepository = taskRepository;
 
     }
 
     @GetMapping("")
     public List<Task> getList(){
 
-        return taskList.getTasks();
+        return taskRepository.findAll();
 
     }
 
     @PostMapping("/{description}")
-    public void newTask(@PathVariable("description") @NotBlank String description){
+    public Task newTask(@PathVariable("description") @NotBlank String description){
 
-        taskList.add(description);
+        return taskRepository.save(new Task(description));
 
     }
 
 
     @GetMapping("/{id}")
-    public Task getTask(@PathVariable("id") @Min(1) Integer id){
+    public Task getTask(@PathVariable("id") @Min(1) Long id){
 
-        return taskList.getById(id);
+        return taskRepository.getById(id);
 
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable("id") @Min(1) Integer id){
+    public void deleteTask(@PathVariable("id") @Min(1) Long id){
 
-        taskList.delete(id);
+        taskRepository.deleteById(id);
 
     }
 
     @PatchMapping("/{id}")
-    public void editToggleTask(@PathVariable("id") @Min (1) Integer id, @RequestBody @Valid @NotNull Task task){
+    public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task){
 
-        if(task.getState() ^ taskList.getById(id).getState()) {
-
-            taskList.toggle(id);
-
-        }
-
-        taskList.edit(id, task.getDescription());
+        task.setId(id);
+        taskRepository.save(task);
 
     }
 

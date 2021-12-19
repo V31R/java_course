@@ -1,74 +1,64 @@
 package kalchenko.task;
 
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.Min;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-@Validated
+@Entity
+@Table(name = "task")
 public class Task {
 
-    @Min(1)
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @NotNull
-    private boolean state = false;
+    private boolean done;
 
     @NotBlank
     private String description;
 
     public Task(){}
 
-    public Task(int id,String description) {
+    public Task(String description) {
 
-        this.id=id;
         this.description = description;
 
     }
 
-
-    public int getId() {
+    public Long getId() {
 
         return id;
 
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
 
         this.id = id;
 
     }
 
-    public void setState(boolean state) {
+    public boolean isDone() {
 
-        this.state = state;
-
-    }
-
-    public boolean getState(){
-
-        return state;
+        return done;
 
     }
 
-    public void toggleState(){
+    public void setDone(boolean done) {
 
-        state = !state;
-
-    }
-
-    public void setDescription(String description){
-
-        this.description=description;
+        this.done = done;
 
     }
 
-    public String getDescription(){
+    public String getDescription() {
 
         return description;
 
     }
 
-}
+    public void setDescription(String description) {
 
+        this.description = description;
+
+    }
+
+}

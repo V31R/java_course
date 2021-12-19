@@ -1,4 +1,4 @@
-package kalchenko.exception;
+package kalchenko.task;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
