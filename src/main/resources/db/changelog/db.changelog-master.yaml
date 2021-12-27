@@ -23,3 +23,58 @@ databaseChangeLog:
                   type: varchar(512)
                   constraints:
                     nullable: false
+  - changeSet:
+      id: addUsers
+      author: kalchenko
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: user
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_user
+                    references: users(user_id)
+  - changeSet:
+      id: addRoles
+      author: kalchenko
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: role
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: insertAdmin1
+      author: kalchenko
+      changes:
+        - sql:
+            sql: insert into users (name, password, role) values ('admin', '1234','ADMIN')
+
+

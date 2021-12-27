@@ -1,5 +1,8 @@
 package kalchenko.task;
 
+import kalchenko.security.Users;
+import org.springframework.security.core.userdetails.User;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -16,6 +19,10 @@ public class Task {
 
     @NotBlank
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "user", referencedColumnName = "user_id")
+    private Users user;
 
     public Task(){}
 
@@ -58,6 +65,18 @@ public class Task {
     public void setDescription(String description) {
 
         this.description = description;
+
+    }
+
+    public Users getUser() {
+
+        return user;
+
+    }
+
+    public void setUser(Users user) {
+
+        this.user = user;
 
     }
 

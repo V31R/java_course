@@ -1,5 +1,8 @@
 package kalchenko.task;
 
+import kalchenko.security.Users;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +33,12 @@ public class TaskController {
     }
 
     @PostMapping("/{description}")
-    public Task newTask(@PathVariable("description") @NotBlank String description){
+    public Task newTask(@PathVariable("description") @NotBlank String description, @AuthenticationPrincipal Users user){
 
-        return taskRepository.save(new Task(description));
+        Task newTask=new Task(description);
+        newTask.setUser(user);
+        return taskRepository.save(newTask);
+
 
     }
 
