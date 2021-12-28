@@ -64,18 +64,16 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull MiniTask task,
+    public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task,
                                @AuthenticationPrincipal Users user){
 
         Task findedtask=taskRepository.findByUserId(id, user.getUser_id())
                 .orElseThrow(()-> new TaskNotFoundException(id));
 
-        //task.setId(id);
-        findedtask.setDone(task.isDone());
-        findedtask.setDescription(task.getDescription());
-        //task.setUser(findedtask.getUser());
+        task.setId(id);
+        task.setUser(findedtask.getUser());
 
-        taskRepository.save(findedtask);
+        taskRepository.save(task);
 
     }
 
