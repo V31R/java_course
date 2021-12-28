@@ -76,5 +76,14 @@ databaseChangeLog:
       changes:
         - sql:
             sql: insert into users (name, password, role) values ('admin', '1234','ADMIN')
+  - changeSet:
+      id: renameTaskColumn
+      author: kalchenko
+      changes:
+        - renameColumn:
+            tableName: task
+            columnDataType: BIGINT
+            newColumnName: owner
+            oldColumnName: user
 
 

@@ -21,7 +21,7 @@ public class Task {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user", referencedColumnName = "user_id")
+    @JoinColumn(name = "owner", referencedColumnName = "user_id")
     private Users user;
 
     public Task(){}
