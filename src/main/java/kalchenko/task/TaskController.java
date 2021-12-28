@@ -2,12 +2,9 @@ package kalchenko.task;
 
 import kalchenko.exception.TaskNotFoundException;
 import kalchenko.security.Users;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -31,7 +28,7 @@ public class TaskController {
     @GetMapping("")
     public List<Task> getList(@AuthenticationPrincipal Users user){
 
-        return taskRepository.findAllByUserId(user.getUser_id()).stream().toList();
+        return taskRepository.findAllByUserId(user.getUserID()).stream().toList();
 
     }
 
@@ -49,7 +46,7 @@ public class TaskController {
     @GetMapping("/{id}")
     public Task getTask(@PathVariable("id") @Min(1) Long id, @AuthenticationPrincipal Users user){
 
-        return taskRepository.findByUserId(id, user.getUser_id())
+        return taskRepository.findByUserId(id, user.getUserID())
                 .orElseThrow(()-> new TaskNotFoundException(id));
 
     }
@@ -57,7 +54,7 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable("id") @Min(1) Long id, @AuthenticationPrincipal Users user){
 
-        Task task=taskRepository.findByUserId(id, user.getUser_id())
+        Task task=taskRepository.findByUserId(id, user.getUserID())
                 .orElseThrow(()-> new TaskNotFoundException(id));
         taskRepository.deleteById(task.getId());
 
@@ -67,7 +64,7 @@ public class TaskController {
     public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task,
                                @AuthenticationPrincipal Users user){
 
-        Task findedtask=taskRepository.findByUserId(id, user.getUser_id())
+        Task findedtask=taskRepository.findByUserId(id, user.getUserID())
                 .orElseThrow(()-> new TaskNotFoundException(id));
 
         task.setId(id);

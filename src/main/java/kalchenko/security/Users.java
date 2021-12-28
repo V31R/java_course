@@ -16,7 +16,7 @@ public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private Long user_id;
+    private Long userID;
 
     @NotBlank
     private String name;
@@ -40,15 +40,15 @@ public class Users implements UserDetails {
         return  authorities;
     }
 
-    public Long getUser_id() {
+    public Long getUserID() {
 
-        return user_id;
+        return userID;
 
     }
 
-    public void setUser_id(Long user_id) {
+    public void setUserID(Long userID) {
 
-        this.user_id = user_id;
+        this.userID = userID;
 
     }
 
