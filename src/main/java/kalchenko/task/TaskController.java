@@ -1,5 +1,8 @@
 package kalchenko.task;
 
+import kalchenko.exception.TaskNotFoundException;
+import kalchenko.security.Users;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,47 +17,59 @@ import java.util.List;
 @Validated
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskCRUD taskRepository;
 
-    public TaskController(TaskRepository taskRepository) {
+    public TaskController(TaskCRUD taskRepository) {
 
         this.taskRepository = taskRepository;
 
     }
 
     @GetMapping("")
-    public List<Task> getList(){
+    public List<Task> getList(@AuthenticationPrincipal Users user){
 
-        return taskRepository.findAll();
+        return taskRepository.findAllByUserId(user.getUserID()).stream().toList();
 
     }
 
     @PostMapping("/{description}")
-    public Task newTask(@PathVariable("description") @NotBlank String description){
+    public Task newTask(@PathVariable("description") @NotBlank String description, @AuthenticationPrincipal Users user){
 
-        return taskRepository.save(new Task(description));
+        Task newTask=new Task(description);
+        newTask.setUser(user);
+        return taskRepository.save(newTask);
+
 
     }
 
 
     @GetMapping("/{id}")
-    public Task getTask(@PathVariable("id") @Min(1) Long id){
+    public Task getTask(@PathVariable("id") @Min(1) Long id, @AuthenticationPrincipal Users user){
 
-        return taskRepository.getById(id);
+        return taskRepository.findByUserId(id, user.getUserID())
+                .orElseThrow(()-> new TaskNotFoundException(id));
 
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable("id") @Min(1) Long id){
+    public void deleteTask(@PathVariable("id") @Min(1) Long id, @AuthenticationPrincipal Users user){
 
-        taskRepository.deleteById(id);
+        Task task=taskRepository.findByUserId(id, user.getUserID())
+                .orElseThrow(()-> new TaskNotFoundException(id));
+        taskRepository.deleteById(task.getId());
 
     }
 
     @PatchMapping("/{id}")
-    public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task){
+    public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task,
+                               @AuthenticationPrincipal Users user){
+
+        Task findedtask=taskRepository.findByUserId(id, user.getUserID())
+                .orElseThrow(()-> new TaskNotFoundException(id));
 
         task.setId(id);
+        task.setUser(findedtask.getUser());
+
         taskRepository.save(task);
 
     }
