@@ -29,6 +29,7 @@ jobs:
       
 #       Upload code coverage report to Codecov
     - name: Test Coverage
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v2
       with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./target/site/jacoco/jacoco.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
