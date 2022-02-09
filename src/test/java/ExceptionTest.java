@@ -1,18 +1,21 @@
 import kalchenko.exception.TaskNotFoundException;
 import kalchenko.exception.TaskNotFoundExceptionAdvice;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.suite.api.Suite;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskNotFoundTest {
+@Suite
+public class ExceptionTest {
 
     @Test
     void checkMessage(){
 
         TaskNotFoundException exception = new TaskNotFoundException(100);
         assertEquals("Could not find task 100",exception.getMessage());
-        assertNotEquals("Could nottask 100",exception.getMessage());
 
     }
+
     @Test
     void checkAdvice(){
 
@@ -21,6 +24,5 @@ public class TaskNotFoundTest {
         assertEquals("Could not find task 100",advice.taskNotFoundHandler(exception));
 
     }
-
 
 }
