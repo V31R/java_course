@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class UsersControllerTest {
 
         UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
 
-        List<Users> data= new ArrayList<Users>();
+        List<Users> data= new ArrayList<>();
         data.add(new Users());
         Mockito.when(userRepositoryMock.findAll()).thenReturn(data);
 
@@ -51,6 +50,5 @@ public class UsersControllerTest {
         assertEquals(usersSpy.getUserID(),usersController.createUser(usersSpy).getUserID());
 
     }
-
 
 }
