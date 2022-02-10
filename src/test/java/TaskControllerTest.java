@@ -2,11 +2,10 @@ import kalchenko.security.Users;
 import kalchenko.task.Task;
 import kalchenko.task.TaskCRUD;
 import kalchenko.task.TaskController;
-import org.assertj.core.internal.bytebuddy.dynamic.DynamicType;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;
 import org.mockito.Mockito;
-import org.springframework.security.core.userdetails.User;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TaskControllerTest {
 
     @Test
-    public void testGet(){
+    public void testGetList(){
 
         Optional<Task> optional = Optional.of(new Task());
         List<Task> data = new ArrayList<>();
@@ -38,9 +37,9 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testPost(){
+    public void testPostTask(){
 
-        String testString = new String("test");
+        String testString = "test";
         Task task = new Task(testString);
         Task taskSpy = Mockito.spy(task);
 
@@ -52,6 +51,28 @@ public class TaskControllerTest {
         TaskController taskController = new TaskController(taskCRUDMock);
 
         assertEquals(testString,taskController.newTask(testString, userMock).getDescription());
+
+    }
+
+    @Test
+    public void testGetById(){
+
+        Users userMock= Mockito.mock(Users.class);
+
+        Task task =new Task();
+        task.setId(0L);
+        task.setUser(userMock);
+
+        Task taskSpy = Mockito.spy(task);
+
+        Optional<Task> optional = Optional.of(task);
+
+        TaskCRUD taskCRUDMock = Mockito.mock(TaskCRUD.class);
+        Mockito.when(taskCRUDMock.findByUserId(taskSpy.getId(), userMock.getUserID())).thenReturn(optional);
+
+        TaskController taskController = new TaskController(taskCRUDMock);
+
+        assertEquals(task.getId(),taskController.getTask(taskSpy.getId(), userMock).getId());
 
     }
 
