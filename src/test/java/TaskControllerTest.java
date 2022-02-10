@@ -57,9 +57,9 @@ public class TaskControllerTest {
     @Test
     public void testGetById(){
 
-        Users userMock= Mockito.mock(Users.class);
+        Users userMock = Mockito.mock(Users.class);
 
-        Task task =new Task();
+        Task task = new Task();
         task.setId(0L);
         task.setUser(userMock);
 
@@ -75,6 +75,5 @@ public class TaskControllerTest {
         assertEquals(task.getId(),taskController.getTask(taskSpy.getId(), userMock).getId());
 
     }
-
 
 }
