@@ -21,17 +21,17 @@ public class TaskControllerTest {
     @Test
     public void testGet(){
 
-
-        Optional<Task> optional=Optional.of(new Task());
+        Optional<Task> optional = Optional.of(new Task());
         List<Task> data = new ArrayList<>();
         data.add(new Task());
 
         TaskCRUD taskCRUDMock = Mockito.mock(TaskCRUD.class);
-        Mockito.when(taskCRUDMock.findAllByUserId(0)).thenReturn(optional);
+        Mockito.when(taskCRUDMock.findAllByUserId(Mockito.anyInt())).thenReturn(optional);
+
+        Users userMock= Mockito.mock(Users.class);
 
         TaskController taskController = new TaskController(taskCRUDMock);
 
-        Users userMock= Mockito.mock(Users.class);
 
         assertEquals(data.get(0).getId(),taskController.getList(userMock).get(0).getId());
 
@@ -41,18 +41,15 @@ public class TaskControllerTest {
     public void testPost(){
 
         String testString = new String("test");
-
-        Task task = new Task();
+        Task task = new Task(testString);
         Task taskSpy = Mockito.spy(task);
-        Mockito.when(taskSpy.getDescription()).thenReturn(testString);
 
         TaskCRUD taskCRUDMock = Mockito.mock(TaskCRUD.class);
-        Mockito.when(taskCRUDMock.save(taskSpy)).thenReturn(taskSpy);
-        //Mockito.when(taskCRUDMock.save(taskSpy)).thenReturn(new Task(testString));
+        Mockito.when(taskCRUDMock.save(Mockito.any())).thenReturn(taskSpy);
+
+        Users userMock = Mockito.mock(Users.class);
 
         TaskController taskController = new TaskController(taskCRUDMock);
-
-        Users userMock= Mockito.mock(Users.class);
 
         assertEquals(testString,taskController.newTask(testString, userMock).getDescription());
 

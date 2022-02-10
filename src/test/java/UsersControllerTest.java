@@ -22,7 +22,7 @@ public class UsersControllerTest {
         data.add(new Users());
         Mockito.when(userRepositoryMock.findAll()).thenReturn(data);
 
-        PasswordEncoder passwordEncoderMock= Mockito.mock(PasswordEncoder.class);
+        PasswordEncoder passwordEncoderMock = Mockito.mock(PasswordEncoder.class);
 
         UsersController usersController = new UsersController(userRepositoryMock,passwordEncoderMock);
 
@@ -33,15 +33,15 @@ public class UsersControllerTest {
     @Test
     public void testPut(){
 
-        Users users =new Users();
+        Users users = new Users();
         Users usersSpy = Mockito.spy(users);
 
         UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
 
-        Mockito.when(userRepositoryMock.save(usersSpy)).thenReturn(usersSpy);
+        Mockito.when(userRepositoryMock.save(Mockito.any())).thenReturn(usersSpy);
 
         PasswordEncoder passwordEncoderMock= Mockito.mock(PasswordEncoder.class);
-        Mockito.when(passwordEncoderMock.encode("")).thenReturn("hash");
+        Mockito.when(passwordEncoderMock.encode(Mockito.any())).thenReturn("hash");
 
 
         UsersController usersController = new UsersController(userRepositoryMock,passwordEncoderMock);
