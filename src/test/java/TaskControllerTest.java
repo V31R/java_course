@@ -82,8 +82,11 @@ public class TaskControllerTest {
             fail("Expected TaskNotFoundException");
 
         }
-        catch (TaskNotFoundException taskNotFoundException)
-            {/*plug*/}
+        catch (TaskNotFoundException taskNotFoundException) {
+
+            assertNotNull(taskNotFoundException);
+
+        }
 
     }
 
@@ -116,8 +119,11 @@ public class TaskControllerTest {
             fail("Expected TaskNotFoundException");
 
         }
-        catch (TaskNotFoundException taskNotFoundException)
-        {/*plug*/}
+        catch (TaskNotFoundException taskNotFoundException) {
+
+            assertNotNull(taskNotFoundException);
+
+        }
 
     }
 
@@ -173,8 +179,11 @@ public class TaskControllerTest {
             fail("Expected TaskNotFoundException");
 
         }
-        catch (TaskNotFoundException taskNotFoundException)
-        {/*plug*/}
+        catch (TaskNotFoundException taskNotFoundException) {
+
+            assertNotNull(taskNotFoundException);
+
+        }
 
     }
 
