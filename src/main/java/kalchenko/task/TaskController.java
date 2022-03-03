@@ -35,7 +35,7 @@ public class TaskController {
     @PostMapping("/{description}")
     public Task newTask(@PathVariable("description") @NotBlank String description, @AuthenticationPrincipal Users user){
 
-        Task newTask=new Task(description);
+        Task newTask = new Task(description);
         newTask.setUser(user);
         return taskRepository.save(newTask);
 
@@ -64,7 +64,7 @@ public class TaskController {
     public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task,
                                @AuthenticationPrincipal Users user){
 
-        Task findedtask=taskRepository.findByUserId(id, user.getUserID())
+        Task findedtask = taskRepository.findByUserId(id, user.getUserID())
                 .orElseThrow(()-> new TaskNotFoundException(id));
 
         task.setId(id);

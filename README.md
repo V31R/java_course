@@ -1,3 +1,7 @@
+[![codecov](https://codecov.io/gh/V31R/java_course/branch/master/graph/badge.svg?token=4FF2N6MU0L)](https://codecov.io/gh/V31R/java_course)
+[![Java CI with Maven](https://github.com/V31R/java_course/actions/workflows/maven.yml/badge.svg)](https://github.com/V31R/java_course/actions/workflows/maven.yml)
+
+
 # To Do list
 
 [Описание API в Swagger/Open API](https://app.swaggerhub.com/apis/V31R/ToDoList/1.0.0#/)

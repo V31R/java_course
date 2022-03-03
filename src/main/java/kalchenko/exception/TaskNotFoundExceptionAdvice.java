@@ -12,7 +12,7 @@ public class TaskNotFoundExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(TaskNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String taskNotFoundHandler(TaskNotFoundException taskNotFoundException){
+    public String taskNotFoundHandler(TaskNotFoundException taskNotFoundException){
 
         return taskNotFoundException.getMessage();
 
