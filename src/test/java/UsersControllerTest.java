@@ -1,54 +1,81 @@
+import kalchenko.SecurityConfiguration;
 import kalchenko.security.UserRepository;
 import kalchenko.security.Users;
 import kalchenko.security.UsersController;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Suite
 public class UsersControllerTest {
 
+    private final PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
+    private Users user;
+    private UserRepository userRepositoryMock;
+    private UsersController usersController;
+
+    @BeforeEach
+
+    public void setUp(){
+        user = getUser();
+        userRepositoryMock = Mockito.mock(UserRepository.class);
+
+        Mockito.when(userRepositoryMock.save(Mockito.eq(user))).thenReturn(getUser());
+
+        usersController= new UsersController(userRepositoryMock,passwordEncoder);
+
+    }
+
+   @Test
+   public void testPostUsers_setUserRole(){
+
+        usersController.createUser(user);
+
+        assertEquals(SecurityConfiguration.USER_ROLE,user.getRole());
+
+   }
+
     @Test
-    public void testGet(){
+    public void testPostUsers_setEncodePassword(){
 
-        UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
+        usersController.createUser(user);
 
-        List<Users> data= new ArrayList<>();
-        data.add(new Users());
-        Mockito.when(userRepositoryMock.findAll()).thenReturn(data);
-
-        PasswordEncoder passwordEncoderMock = Mockito.mock(PasswordEncoder.class);
-
-        UsersController usersController = new UsersController(userRepositoryMock,passwordEncoderMock);
-
-        assertEquals(data,usersController.getUsers());
+        assertEquals(passwordEncoder.encode(getUser().getPassword()),user.getPassword());
 
     }
 
     @Test
-    public void testPut(){
+    public void testPostUsers_saveUser(){
 
-        Users users = new Users();
-        Users usersSpy = Mockito.spy(users);
+        usersController.createUser(user);
 
-        UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
-
-        Mockito.when(userRepositoryMock.save(Mockito.any())).thenReturn(usersSpy);
-
-        PasswordEncoder passwordEncoderMock= Mockito.mock(PasswordEncoder.class);
-        Mockito.when(passwordEncoderMock.encode(Mockito.any())).thenReturn("hash");
-
-
-        UsersController usersController = new UsersController(userRepositoryMock,passwordEncoderMock);
-
-        assertNotEquals(usersSpy.getPassword(),usersController.createUser(usersSpy).getPassword());
-        assertEquals(usersSpy.getUserID(),usersController.createUser(usersSpy).getUserID());
+        Mockito.verify(userRepositoryMock).save(Mockito.any());
 
     }
+
+    @Test
+    public void testGetUsers_getAll(){
+
+        usersController.getUsers();
+
+        Mockito.verify(userRepositoryMock).findAll();
+
+    }
+
+    private static Users getUser(){
+
+        Users user = new Users();
+        user.setPassword("password");
+        user.setName("User");
+
+        return user;
+
+    }
+
 
 }
