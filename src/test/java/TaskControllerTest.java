@@ -1,14 +1,14 @@
+import kalchenko.exception.TaskNotFoundException;
 import kalchenko.security.Users;
 import kalchenko.task.Task;
 import kalchenko.task.TaskCRUD;
 import kalchenko.task.TaskController;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;
 import org.mockito.Mockito;
 
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,62 +17,193 @@ import static org.junit.jupiter.api.Assertions.*;
 @Suite
 public class TaskControllerTest {
 
+    private TaskCRUD taskRepositoryMock;
+    private TaskController taskController;
+    private Users user;
+    private Task task;
+
+    @BeforeEach
+    public void setUp(){
+
+        user = getUser();
+        task = getTask();
+        taskRepositoryMock = Mockito.mock(TaskCRUD.class);
+
+        Optional<Task> optional = Optional.of(getTask());
+
+        Mockito.when(taskRepositoryMock.findAllByUserId(Mockito.anyInt()))
+                .thenReturn(optional);
+
+        Mockito.when(taskRepositoryMock.findByUserId(Mockito.anyInt(),
+                Mockito.anyInt())).thenReturn(optional);
+
+        taskController = new TaskController(taskRepositoryMock);
+
+    }
+
     @Test
     public void testGetList(){
 
-        Optional<Task> optional = Optional.of(new Task());
-        List<Task> data = new ArrayList<>();
-        data.add(new Task());
+        taskController.getList(user);
 
-        TaskCRUD taskCRUDMock = Mockito.mock(TaskCRUD.class);
-        Mockito.when(taskCRUDMock.findAllByUserId(Mockito.anyInt())).thenReturn(optional);
-
-        Users userMock= Mockito.mock(Users.class);
-
-        TaskController taskController = new TaskController(taskCRUDMock);
-
-
-        assertEquals(data.get(0).getId(),taskController.getList(userMock).get(0).getId());
+        Mockito.verify(taskRepositoryMock).findAllByUserId(Mockito.anyInt());
 
     }
 
     @Test
-    public void testPostTask(){
+    public void testNewTask(){
 
-        String testString = "test";
-        Task task = new Task(testString);
-        Task taskSpy = Mockito.spy(task);
+        taskController.newTask("",user);
 
-        TaskCRUD taskCRUDMock = Mockito.mock(TaskCRUD.class);
-        Mockito.when(taskCRUDMock.save(Mockito.any())).thenReturn(taskSpy);
+        Mockito.verify(taskRepositoryMock).save(Mockito.any(Task.class));
 
-        Users userMock = Mockito.mock(Users.class);
+    }
 
-        TaskController taskController = new TaskController(taskCRUDMock);
 
-        assertEquals(testString,taskController.newTask(testString, userMock).getDescription());
+    @Test
+    public void testGetTask_IfFound(){
+
+        taskController.getTask(1L, user);
+
+        Mockito.verify(taskRepositoryMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
+
+    }
+
+
+
+    @Test
+    public void testGetTask_NotFound(){
+
+        setTaskRepositoryMockForException();
+
+        try {
+
+            taskController.getTask(0L, user);
+            fail("Expected TaskNotFoundException");
+
+        }
+        catch (TaskNotFoundException taskNotFoundException)
+            {/*plug*/}
 
     }
 
     @Test
-    public void testGetById(){
+    public void testDeleteTask_IfFound(){
 
-        Users userMock = Mockito.mock(Users.class);
+        taskController.deleteTask(1L, user);
 
-        Task task = new Task();
-        task.setId(0L);
-        task.setUser(userMock);
+        Mockito.verify(taskRepositoryMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
 
-        Task taskSpy = Mockito.spy(task);
+    }
 
-        Optional<Task> optional = Optional.of(task);
+    @Test
+    public void testDeleteTask_IfFound_Delete(){
 
-        TaskCRUD taskCRUDMock = Mockito.mock(TaskCRUD.class);
-        Mockito.when(taskCRUDMock.findByUserId(taskSpy.getId(), userMock.getUserID())).thenReturn(optional);
+        taskController.deleteTask(1L, user);
 
-        TaskController taskController = new TaskController(taskCRUDMock);
+        Mockito.verify(taskRepositoryMock).deleteById(Mockito.anyLong());
 
-        assertEquals(task.getId(),taskController.getTask(taskSpy.getId(), userMock).getId());
+    }
+
+    @Test
+    public void testDeleteTask_NotFound(){
+
+        setTaskRepositoryMockForException();
+
+        try {
+
+            taskController.deleteTask(0L, user);
+            fail("Expected TaskNotFoundException");
+
+        }
+        catch (TaskNotFoundException taskNotFoundException)
+        {/*plug*/}
+
+    }
+
+
+    @Test
+    public void testEditToggleTask_IfFound(){
+
+        taskController.editToggleTask(1L, task, user);
+
+        Mockito.verify(taskRepositoryMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
+
+    }
+
+    @Test
+    public void testEditToggleTask_IfFound_SetID(){
+
+        Long testId = Long.valueOf(1);
+
+        taskController.editToggleTask(testId, task, user);
+
+        assertEquals(testId, task.getId());
+
+    }
+
+    @Test
+    public void testEditToggleTask_IfFound_SetUser(){
+
+        taskController.editToggleTask(1L, task, user);
+
+        assertEquals(task.getUser().getUserID(), user.getUserID());
+        assertEquals(task.getUser().getUsername(), user.getUsername());
+        assertEquals(task.getUser().getPassword(), user.getPassword());
+
+    }
+
+    @Test
+    public void testEditToggleTask_IfFound_Save(){
+
+        taskController.editToggleTask(1L, task, user);
+
+        Mockito.verify(taskRepositoryMock).save(Mockito.any(Task.class));
+
+    }
+
+    @Test
+    public void testEditToggleTask_NotFound(){
+
+        setTaskRepositoryMockForException();
+
+        try {
+
+            taskController.editToggleTask(1L, task, user);
+            fail("Expected TaskNotFoundException");
+
+        }
+        catch (TaskNotFoundException taskNotFoundException)
+        {/*plug*/}
+
+    }
+
+
+    private static Users getUser(){
+
+        Users user = new Users();
+        user.setUserID(1L);
+        user.setName("User");
+        user.setPassword("password");
+
+        return  user;
+
+    }
+
+    private static Task getTask(){
+
+        Task task = new Task("");
+        task.setUser(getUser());
+        task.setId(1L);
+
+        return task;
+
+    }
+
+    private void setTaskRepositoryMockForException(){
+
+        Mockito.when(taskRepositoryMock.findByUserId(Mockito.anyInt(), Mockito.anyInt()))
+                .thenReturn(Optional.empty());
 
     }
 

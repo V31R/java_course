@@ -20,8 +20,8 @@ public class UsersControllerTest {
     private UsersController usersController;
 
     @BeforeEach
-
     public void setUp(){
+
         user = getUser();
         userRepositoryMock = Mockito.mock(UserRepository.class);
 
