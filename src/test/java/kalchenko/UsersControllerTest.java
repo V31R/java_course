@@ -1,3 +1,5 @@
+package kalchenko;
+
 import kalchenko.SecurityConfiguration;
 import kalchenko.security.UserRepository;
 import kalchenko.security.Users;
