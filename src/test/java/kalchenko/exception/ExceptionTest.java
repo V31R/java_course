@@ -1,4 +1,4 @@
-package kalchenko;
+package kalchenko.exception;
 
 import kalchenko.exception.TaskNotFoundException;
 import kalchenko.exception.TaskNotFoundExceptionAdvice;

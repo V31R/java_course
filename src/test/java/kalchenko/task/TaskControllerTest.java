@@ -1,4 +1,4 @@
-package kalchenko;
+package kalchenko.task;
 
 import kalchenko.exception.TaskNotFoundException;
 import kalchenko.security.Users;
