@@ -40,7 +40,7 @@ public class UserRepositoryTest {
     private static  Users getTestUser(){
 
         Users user = new Users();
-        user.setName("user");
+        user.setName("owner");
         user.setPassword("password");
         user.setRole(SecurityConfiguration.USER_ROLE);
 
