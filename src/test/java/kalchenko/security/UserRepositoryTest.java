@@ -5,10 +5,12 @@ import kalchenko.SecurityConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Sql(statements = "delete from users where name in('user','owner');")
 public class UserRepositoryTest {
 
     @Autowired
