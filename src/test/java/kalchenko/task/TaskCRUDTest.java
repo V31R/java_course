@@ -71,7 +71,6 @@ public class TaskCRUDTest {
         assertEquals(1, usersTask.size());
         assertEquals(1, adminsTask.size());
 
-
     }
 
     @Test
@@ -80,22 +79,21 @@ public class TaskCRUDTest {
         Task task = new Task();
         task.setUser(user);
         task.setDescription("description");
-        taskCRUD.save(task);
-        taskCRUD.save(task);
 
-        var usersTask = taskCRUD.findAllByUserId(user.getUserID()).stream().toList();
+        //some tasks with different known id
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(taskCRUD.save(task));
+        tasks.add(taskCRUD.save(task));
 
+        for(var knownTask : tasks){
 
-        List<Task> tasks= new ArrayList<>();
-        for(Task taskTemp : usersTask){
+            var testTask = taskCRUD.findByUserId(knownTask.getId(), user.getUserID()).get();
 
-            tasks.add(taskCRUD.findByUserId(taskTemp.getId(), user.getUserID()).get());
+            assertEquals(knownTask.getId(), testTask.getId());
+            assertEquals(knownTask.getUser().getUserID(), testTask.getUser().getUserID());
 
         }
 
-        assertEquals(usersTask.size(), tasks.size());
-
     }
-
 
 }

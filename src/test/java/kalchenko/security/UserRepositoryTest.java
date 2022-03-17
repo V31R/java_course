@@ -5,7 +5,6 @@ import kalchenko.SecurityConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.AfterTestClass;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,8 +13,6 @@ public class UserRepositoryTest {
 
     @Autowired
     UserRepository userRepository;
-
-
 
     @Test
     public void haveAdmin_Always(){
