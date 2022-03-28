@@ -39,7 +39,6 @@ public class TaskController {
         newTask.setUser(user);
         return taskRepository.save(newTask);
 
-
     }
 
 
