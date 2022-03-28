@@ -1,5 +1,6 @@
 package kalchenko;
 
+import kalchenko.external.ExternalTask;
 import kalchenko.task.Task;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,8 +18,8 @@ public class Main{
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("user","1234");
-        HttpEntity<Task[]> entity = new HttpEntity<Task[]>(headers);
-        var result = restTemplate.exchange("http://localhost:54322/taskRest", HttpMethod.GET,entity,Task[].class);
+        HttpEntity<ExternalTask[]> entity = new HttpEntity<>(headers);
+        var result = restTemplate.exchange("http://localhost:54322/taskRest", HttpMethod.GET,entity, ExternalTask[].class);
         HttpStatus statusCode = result.getStatusCode();
 
         SpringApplication.run(Main.class, args);
