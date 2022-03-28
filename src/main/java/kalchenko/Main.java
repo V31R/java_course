@@ -1,6 +1,7 @@
 package kalchenko;
 
 import kalchenko.external.ExternalTask;
+import kalchenko.security.Users;
 import kalchenko.task.Task;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,12 +17,20 @@ public class Main{
 
     public static  void  main(String[] args){
         RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("user","1234");
-        HttpEntity<ExternalTask[]> entity = new HttpEntity<>(headers);
-        var result = restTemplate.exchange("http://localhost:54322/taskRest", HttpMethod.GET,entity, ExternalTask[].class);
-        HttpStatus statusCode = result.getStatusCode();
-
+        {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth("user", "1234");
+            HttpEntity<ExternalTask[]> entity = new HttpEntity<>(headers);
+            var result = restTemplate.exchange("http://localhost:54322/taskRest", HttpMethod.GET, entity, ExternalTask[].class);
+            HttpStatus statusCode = result.getStatusCode();
+        }
+        {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth("admin", "admin");
+            HttpEntity<Users> entity = new HttpEntity<>(headers);
+            var result = restTemplate.exchange("http://localhost:54322/userRest/add?name=user&password=1234", HttpMethod.POST, entity, Users.class);
+            HttpStatus statusCode = result.getStatusCode();
+        }
         SpringApplication.run(Main.class, args);
 
 
