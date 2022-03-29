@@ -18,5 +18,5 @@ API для интеграции [лежит здесь](https://github.com/Evgen
 	GET/tasks - получение списка задач.
 	GET/tasks/{id} - получение задачи с идентификатором id.
 	DELETE/tasks/{id} - удаление задачи с идентификатором id.
-	PATCH/tasks/{id} - Изменение задачи с идентификатором id.
+	PUT/tasks - Заменяет заадчу из бд на передаваемую задачу.
 	POST/tasks/{description} - добавление задачи с описанием description.
