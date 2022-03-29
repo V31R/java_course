@@ -1,31 +1,32 @@
-package kalchenko.task;
+package kalchenko.taskDTOLayer;
 
 import kalchenko.exception.TaskNotFoundException;
 import kalchenko.security.Users;
 
+import kalchenko.task.Task;
+import kalchenko.task.TaskCRUD;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.suite.api.Suite;
 import org.mockito.Mockito;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-@Suite
-public class TaskControllerTest {
+public class TaskServiceTest {
 
     private TaskCRUD taskRepositoryMock;
-    private TaskController taskController;
+    private TaskService taskService;
     private Users user;
-    private Task task;
+    private TaskDTO taskDTO;
+    private static TaskMapper taskMapper = new TaskMapperImpl();
 
     @BeforeEach
     public void setUp(){
 
         user = getUser();
-        task = getTask();
+        taskDTO = getTaskDTO();
         taskRepositoryMock = Mockito.mock(TaskCRUD.class);
 
         Optional<Task> optional = Optional.of(getTask());
@@ -36,23 +37,23 @@ public class TaskControllerTest {
         Mockito.when(taskRepositoryMock.findByUserId(Mockito.anyInt(),
                 Mockito.anyInt())).thenReturn(optional);
 
-        taskController = new TaskController(taskRepositoryMock);
+        taskService = new TaskServiceImpl(taskRepositoryMock,taskMapper);
 
     }
 
     @Test
-    public void testGetList(){
+    public void testFindAllByUserId(){
 
-        taskController.getList(user);
+        taskService.findAllByUserId(user);
 
         Mockito.verify(taskRepositoryMock).findAllByUserId(Mockito.anyInt());
 
     }
 
     @Test
-    public void testNewTask(){
+    public void testSave(){
 
-        taskController.newTask("",user);
+        taskService.save(taskDTO,user);
 
         Mockito.verify(taskRepositoryMock).save(Mockito.any(Task.class));
 
@@ -60,9 +61,9 @@ public class TaskControllerTest {
 
 
     @Test
-    public void testGetTask_IfFound(){
+    public void testFindByUserId_IfFound(){
 
-        taskController.getTask(1L, user);
+        taskService.findByUserId(taskDTO, user);
 
         Mockito.verify(taskRepositoryMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
 
@@ -71,13 +72,13 @@ public class TaskControllerTest {
 
 
     @Test
-    public void testGetTask_NotFound(){
+    public void testFindByUserId_NotFound(){
 
         setTaskRepositoryMockForException();
 
         try {
 
-            taskController.getTask(0L, user);
+            taskService.findByUserId(taskDTO, user);
             fail("Expected TaskNotFoundException");
 
         }
@@ -90,18 +91,18 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testDeleteTask_IfFound(){
+    public void testDeleteById_IfFound(){
 
-        taskController.deleteTask(1L, user);
+        taskService.deleteById(taskDTO, user);
 
         Mockito.verify(taskRepositoryMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
 
     }
 
     @Test
-    public void testDeleteTask_IfFound_Delete(){
+    public void testDeleteById_IfFound_Delete(){
 
-        taskController.deleteTask(1L, user);
+        taskService.deleteById(taskDTO, user);
 
         Mockito.verify(taskRepositoryMock).deleteById(Mockito.anyLong());
 
@@ -114,7 +115,7 @@ public class TaskControllerTest {
 
         try {
 
-            taskController.deleteTask(0L, user);
+            taskService.deleteById(taskDTO, user);
             fail("Expected TaskNotFoundException");
 
         }
@@ -125,67 +126,6 @@ public class TaskControllerTest {
         }
 
     }
-
-
-    @Test
-    public void testEditToggleTask_IfFound(){
-
-        taskController.editToggleTask(1L, task, user);
-
-        Mockito.verify(taskRepositoryMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
-
-    }
-
-    @Test
-    public void testEditToggleTask_IfFound_SetID(){
-
-        Long testId = Long.valueOf(1);
-
-        taskController.editToggleTask(testId, task, user);
-
-        assertEquals(testId, task.getId());
-
-    }
-
-    @Test
-    public void testEditToggleTask_IfFound_SetUser(){
-
-        taskController.editToggleTask(1L, task, user);
-
-        assertEquals(task.getUser().getUserID(), user.getUserID());
-        assertEquals(task.getUser().getUsername(), user.getUsername());
-        assertEquals(task.getUser().getPassword(), user.getPassword());
-
-    }
-
-    @Test
-    public void testEditToggleTask_IfFound_Save(){
-
-        taskController.editToggleTask(1L, task, user);
-
-        Mockito.verify(taskRepositoryMock).save(Mockito.any(Task.class));
-
-    }
-
-    @Test
-    public void testEditToggleTask_NotFound(){
-
-        setTaskRepositoryMockForException();
-
-        try {
-
-            taskController.editToggleTask(1L, task, user);
-            fail("Expected TaskNotFoundException");
-
-        }
-        catch (TaskNotFoundException taskNotFoundException) {
-
-            assertNotNull(taskNotFoundException);
-
-        }
-
-    }
-
 
     private static Users getUser(){
 
@@ -208,6 +148,16 @@ public class TaskControllerTest {
 
     }
 
+    private static TaskDTO getTaskDTO(){
+
+        TaskDTO task = new TaskDTO();
+        task.setDescription("");
+        task.setId("1");
+
+        return task;
+
+    }
+
     private void setTaskRepositoryMockForException(){
 
         Mockito.when(taskRepositoryMock.findByUserId(Mockito.anyInt(), Mockito.anyInt()))
@@ -216,3 +166,4 @@ public class TaskControllerTest {
     }
 
 }
+
