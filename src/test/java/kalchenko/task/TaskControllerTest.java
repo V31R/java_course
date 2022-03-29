@@ -21,7 +21,7 @@ public class TaskControllerTest {
     private Users user;
     private Task task;
 
-    @BeforeEach
+    /*@BeforeEach
     public void setUp(){
 
         user = getUser();
@@ -213,6 +213,6 @@ public class TaskControllerTest {
         Mockito.when(taskRepositoryMock.findByUserId(Mockito.anyInt(), Mockito.anyInt()))
                 .thenReturn(Optional.empty());
 
-    }
+    }*/
 
 }
