@@ -1,7 +1,5 @@
 package kalchenko.exception;
 
-import kalchenko.exception.TaskNotFoundException;
-import kalchenko.exception.TaskNotFoundExceptionAdvice;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;
 
