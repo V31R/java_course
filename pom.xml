@@ -177,6 +177,13 @@
             <version>1.4.2.Final</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>1.58</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -224,7 +231,9 @@
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
-                        -Amapstruct.defaultComponentModel=spring
+                        <compilerArg>
+                            -Amapstruct.defaultComponentModel=spring
+                        </compilerArg>
                     </compilerArgs>
                 </configuration>
             </plugin>

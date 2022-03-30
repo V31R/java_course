@@ -10,13 +10,13 @@ public interface ExternalTaskMapper {
 
     @Mappings({
             @Mapping(source = "description", target = "name"),
-            @Mapping(source = "done", target="completed")
+            @Mapping(source = "done", target = "completed")
     })
     ExternalTask toExternalTask(TaskDTO taskDTO);
 
     @Mappings({
             @Mapping(source = "name", target = "description"),
-            @Mapping(source = "completed", target="done")
+            @Mapping(source = "completed", target = "done")
     })
     TaskDTO toDTO(ExternalTask externalTask);
 
