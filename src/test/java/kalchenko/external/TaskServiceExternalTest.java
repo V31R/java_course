@@ -32,6 +32,8 @@ public class TaskServiceExternalTest {
     private static final String USER = "user";
     private static final String PASSWORD = "1234";
 
+    private static final String BASE_URL_PART = "/taskRest/";
+
     private static TestTask[] tasksArray;
 
     private static WireMockServer wireMockServer;
@@ -60,7 +62,7 @@ public class TaskServiceExternalTest {
     }
 
     @Test
-    public void testFindAllByUserId(){
+    public void testFindAllByUserId_IfFounded(){
 
         setTasksArray();
 
@@ -78,7 +80,7 @@ public class TaskServiceExternalTest {
         }
         tasksJSON.append("]");
 
-        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/"))
+        wireMockServer.stubFor(get(WireMock.urlEqualTo(BASE_URL_PART))
                 .withBasicAuth(USER, PASSWORD)
                 .willReturn(okJson(tasksJSON.toString())));
 
@@ -96,6 +98,8 @@ public class TaskServiceExternalTest {
 
     }
 
+
+
     @Test
     public void testFindByUserId_IfFounded(){
 
@@ -103,7 +107,7 @@ public class TaskServiceExternalTest {
 
         setTasksArray();
 
-        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/"))
+        wireMockServer.stubFor(get(WireMock.urlEqualTo(BASE_URL_PART))
                 .withBasicAuth(USER, PASSWORD)
                 .willReturn(okJson(makeJSONString(tasksArray[taskIndex]))));
 
@@ -121,7 +125,7 @@ public class TaskServiceExternalTest {
     @Test
     public void testFindByUserId_IfNotFounded(){
 
-        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/"))
+        wireMockServer.stubFor(get(WireMock.urlEqualTo(BASE_URL_PART+"1"))
                 .withBasicAuth(USER, PASSWORD)
                 .willReturn(okJson("")));
 
@@ -138,6 +142,29 @@ public class TaskServiceExternalTest {
             assertNotNull(taskNotFoundException);
 
         }
+
+    }
+
+    @Test
+    public void testSave(){
+
+        int taskIndex = 1;
+
+        setTasksArray();
+
+        wireMockServer.stubFor(post(WireMock.urlEqualTo(BASE_URL_PART
+                + "add?name="+tasksArray[taskIndex].name))
+                .withBasicAuth(USER, PASSWORD)
+                .willReturn(okJson(makeJSONString(tasksArray[taskIndex]))));
+
+        TaskDTO taskToSave = new TaskDTO();
+        taskToSave.setDescription(tasksArray[taskIndex].name);
+        TaskDTO taskDTO = taskServiceExternal.save(taskToSave, getUser());
+
+        assertEquals(tasksArray[taskIndex].id, taskDTO.getId());
+        assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
+        assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
+
 
     }
 

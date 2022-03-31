@@ -29,7 +29,7 @@ public class TaskServiceExternal implements TaskService {
         HttpEntity<ExternalTask[]> entity = new HttpEntity<ExternalTask[]>(httpHeaders);
         var response = restTemplate.exchange(baseURL, HttpMethod.GET,entity,ExternalTask[].class);
         HttpStatus statusCode = response.getStatusCode();
-        if(statusCode.isError()){
+        if(statusCode.isError() || response.getBody() == null){
 
             throw  new TaskNotFoundException(0);
 
@@ -51,7 +51,7 @@ public class TaskServiceExternal implements TaskService {
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
 
         HttpEntity<ExternalTask> entity = new HttpEntity<ExternalTask>(httpHeaders);
-        var response = restTemplate.exchange(baseURL, HttpMethod.GET,entity,ExternalTask.class);
+        var response = restTemplate.exchange(baseURL+taskDTO.getId(), HttpMethod.GET,entity,ExternalTask.class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError() || response.getBody() == null){
 
