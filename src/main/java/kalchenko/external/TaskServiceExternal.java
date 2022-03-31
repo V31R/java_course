@@ -88,10 +88,10 @@ public class TaskServiceExternal implements TaskService {
 
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
 
-        HttpEntity<ExternalTask> entity = new HttpEntity<ExternalTask>(httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
         var response =
                 restTemplate.exchange(baseURL+"delete/"+taskDTO.getId(),
-                        HttpMethod.DELETE,entity,ExternalTask.class);
+                        HttpMethod.DELETE,entity,String.class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError()){
 

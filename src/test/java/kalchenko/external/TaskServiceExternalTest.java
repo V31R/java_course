@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 
 import java.util.List;
@@ -164,6 +165,27 @@ public class TaskServiceExternalTest {
         assertEquals(tasksArray[taskIndex].id, taskDTO.getId());
         assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
         assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
+
+
+    }
+
+    @Test
+    public void testDelete(){
+
+        String taskId = "1";
+
+        wireMockServer.stubFor(delete(BASE_URL_PART
+                + "delete/"+taskId)
+                .withBasicAuth(USER, PASSWORD)
+                .willReturn(ok("")));
+
+        TaskDTO taskToDelete = new TaskDTO();
+        taskToDelete.setId(taskId);
+        taskServiceExternal.deleteById(taskToDelete, getUser());
+
+        wireMockServer.verify(deleteRequestedFor(WireMock.urlEqualTo(BASE_URL_PART
+                + "delete/"+taskId)));
+
 
 
     }
