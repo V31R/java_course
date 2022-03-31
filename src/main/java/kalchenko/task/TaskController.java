@@ -3,6 +3,7 @@ package kalchenko.task;
 import kalchenko.external.TaskServiceExternal;
 import kalchenko.security.Users;
 import kalchenko.taskDTOLayer.TaskDTO;
+import kalchenko.taskDTOLayer.TaskService;
 import kalchenko.taskDTOLayer.TaskServiceImpl;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,7 +23,7 @@ public class TaskController {
 
     private final TaskServiceImpl localService;
     private final TaskServiceExternal externalService;
-
+    private TaskService currentService;
 
     public TaskController(TaskServiceImpl localService,TaskServiceExternal externalService) {
 
@@ -33,7 +34,7 @@ public class TaskController {
 
     @GetMapping("")
     public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
-
+        
         var tasks= localService.findAllByUserId(user);
         if(tasks.size() == 0){
 
@@ -60,7 +61,17 @@ public class TaskController {
 
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(id);
-        return localService.findByUserId(taskDTO, user);
+        try {
+            var l = Long.valueOf(id);
+            currentService = localService;
+        }
+        catch (NumberFormatException numberFormatException){
+            
+            currentService = externalService;
+            
+        }
+        
+        return currentService.findByUserId(taskDTO, user);
 
     }
 
@@ -76,11 +87,20 @@ public class TaskController {
     @PutMapping("")
     public void editToggleTask( @RequestBody @Valid @NotNull TaskDTO taskDTO,
                                @AuthenticationPrincipal Users user){
+        try {
+            var l = Long.valueOf(taskDTO.getId());
+            currentService = localService;
+        }
+        catch (NumberFormatException numberFormatException){
 
-        TaskDTO findedtask = localService.findByUserId(taskDTO, user);
-        findedtask.setDescription(taskDTO.getDescription());
-        findedtask.setDone(taskDTO.isDone());
-        localService.save(findedtask,user);
+            currentService = externalService;
+
+        }
+        
+        TaskDTO findedTask = currentService.findByUserId(taskDTO, user);
+        findedTask.setDescription(taskDTO.getDescription());
+        findedTask.setDone(taskDTO.isDone());
+        currentService.save(findedTask,user);
 
     }
 
