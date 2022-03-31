@@ -40,8 +40,10 @@ public class TaskServiceExternalTest {
     @Autowired
     TaskServiceExternal taskServiceExternal;
 
-    static final String USER = "user";
-    static final String PASSWORD = "1234";
+    private static final String USER = "user";
+    private static final String PASSWORD = "1234";
+
+    private static TestTask[] tasksArray;
 
     private static WireMockServer wireMockServer;
 
@@ -59,6 +61,7 @@ public class TaskServiceExternalTest {
         wireMockServer.stop();
 
     }
+
     @Test
     public void testWireMockSetUp(){
 
@@ -68,42 +71,92 @@ public class TaskServiceExternalTest {
     }
 
     @Test
-    public void runServerTest(){
+    public void testFindAllByUserId(){
 
-        String description = "External Task with ";
+        setTasksArray();
 
-        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/")).willReturn(okJson("[" +
-                "{" +
-                "\"id\": 1," +
-                "\"name\": \"External Task\"," +
-                "\"completed\": true" +
-                "}," +
-                "{" +
-                "\"id\": 2," +
-                "\"name\": \"" + description + "\"," +
-                "\"completed\": false" +
-                "}" +
-                "]")));
+        StringBuilder tasksJSON = new StringBuilder();
+        tasksJSON.append("[");
+        for( int i = 0; i < tasksArray.length;i++){
+
+            if(i > 0){
+
+                tasksJSON.append(",");
+
+            }
+            tasksJSON.append(makeJSONString(tasksArray[i]));
+
+        }
+        tasksJSON.append("]");
+
+        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/"))
+                .withBasicAuth(USER, PASSWORD)
+                .willReturn(okJson(tasksJSON.toString())));
 
 
-         List<TaskDTO> tasksDTO = taskServiceExternal.findAllByUserId(getUser());
+        List<TaskDTO> tasksDTO = taskServiceExternal.findAllByUserId(getUser());
 
-        assertEquals(2, tasksDTO.size());
+        assertEquals(tasksArray.length, tasksDTO.size());
+        for( int i = 0; i < tasksArray.length;i++){
 
+            assertEquals(tasksArray[i].id, tasksDTO.get(i).getId());
+            assertEquals(tasksArray[i].name, tasksDTO.get(i).getDescription());
+            assertEquals(tasksArray[i].completed, tasksDTO.get(i).isDone());
+
+        }
 
     }
 
     private static  Users getUser(){
 
         Users user = new Users();
-        user.setName("user");
-        user.setPassword("1234");
+        user.setName(USER);
+        user.setPassword(PASSWORD);
         user.setRole(SecurityConfiguration.USER_ROLE);
 
         return user;
 
     }
 
+    static class TestTask{
+
+        public String id;
+        public String name;
+        public boolean completed;
+
+    }
+
+    static void setTasksArray(){
+
+        tasksArray = new TestTask[2];
+        for( int i = 0; i < tasksArray.length;i++){
+            tasksArray[i]=new TestTask();
+        }
+        tasksArray[0].id="1";
+        tasksArray[0].name= "description_first";
+        tasksArray[0].completed = true;
+
+        tasksArray[1].id="2";
+        tasksArray[1].name= "description_second";
+        tasksArray[1].completed = false;
+
+    }
+
+    static String makeJSONString(TestTask testTask){
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("{ \"id\": ")
+                .append(testTask.id)
+                .append(", \"name\": \"")
+                .append(testTask.name)
+                .append("\", \"completed\" :")
+                .append(testTask.completed)
+                .append("}");
+
+        return builder.toString();
+
+    }
 
 
 }
