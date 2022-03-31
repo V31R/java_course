@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +59,18 @@ public class TaskControllerTest {
 
     @Test
     public void testGetList_Local(){
+
+        taskController.getList(user);
+
+        Mockito.verify(localServiceMock).findAllByUserId(Mockito.any(Users.class));
+
+    }
+
+    @Test
+    public void testGetList_External(){
+
+        Mockito.when(localServiceMock.findAllByUserId(Mockito.any(Users.class)))
+                .thenReturn(new ArrayList<>());
 
         taskController.getList(user);
 
@@ -123,22 +136,22 @@ public class TaskControllerTest {
         }
 
     }
-    /*
+
     @Test
     public void testDeleteTask_IfFound_Local(){
 
         taskController.deleteTask("1", user);
 
-        Mockito.verify(localServiceMock).findByUserId(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
+        Mockito.verify(localServiceMock).deleteById(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
 
     }
 
     @Test
-    public void testDeleteTask_IfFound_Delete_Local(){
+    public void testDeleteTask_IfFound_External(){
 
-        taskController.deleteTask("1", user);
+        taskController.deleteTask("EXT1", user);
 
-        Mockito.verify(localServiceMock).deleteById(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
+        Mockito.verify(externalServiceMock).deleteById(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
 
     }
 
@@ -160,7 +173,7 @@ public class TaskControllerTest {
         }
 
     }
-    */
+
     /*
     @Test
     public void testEditToggleTask_IfFound(){
@@ -258,12 +271,18 @@ public class TaskControllerTest {
         Mockito.when(localServiceMock.findByUserId(Mockito.any(TaskDTO.class),Mockito.any(Users.class)))
                 .thenThrow(new TaskNotFoundException(1));
 
+        Mockito.doThrow(new TaskNotFoundException(1))
+                .when(localServiceMock).deleteById(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
+
+
     }
 
     private void setExternalTaskServiceMockForException(){
 
         Mockito.when(externalServiceMock.findByUserId(Mockito.any(TaskDTO.class),Mockito.any(Users.class)))
                 .thenThrow(new TaskNotFoundException(1));
+
+
 
     }
 
