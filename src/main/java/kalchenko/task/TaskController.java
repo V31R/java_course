@@ -61,15 +61,7 @@ public class TaskController {
 
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(id);
-        try {
-            var l = Long.valueOf(id);
-            currentService = localService;
-        }
-        catch (NumberFormatException numberFormatException){
-            
-            currentService = externalService;
-            
-        }
+        chooseService(id);
         
         return currentService.findByUserId(taskDTO, user);
 
@@ -80,15 +72,29 @@ public class TaskController {
 
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(id);
-        localService.deleteById(taskDTO,user);
+        chooseService(id);
+
+        currentService.deleteById(taskDTO,user);
 
     }
 
     @PutMapping("")
     public void editToggleTask( @RequestBody @Valid @NotNull TaskDTO taskDTO,
                                @AuthenticationPrincipal Users user){
+
+        chooseService(taskDTO.getId());
+        
+        TaskDTO findedTask = currentService.findByUserId(taskDTO, user);
+        findedTask.setDescription(taskDTO.getDescription());
+        findedTask.setDone(taskDTO.isDone());
+        currentService.save(findedTask,user);
+
+    }
+
+    private TaskService chooseService(String id){
+
         try {
-            var l = Long.valueOf(taskDTO.getId());
+            var l = Long.valueOf(id);
             currentService = localService;
         }
         catch (NumberFormatException numberFormatException){
@@ -96,11 +102,8 @@ public class TaskController {
             currentService = externalService;
 
         }
-        
-        TaskDTO findedTask = currentService.findByUserId(taskDTO, user);
-        findedTask.setDescription(taskDTO.getDescription());
-        findedTask.setDone(taskDTO.isDone());
-        currentService.save(findedTask,user);
+
+        return  currentService;
 
     }
 
