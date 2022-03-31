@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 
 
 import java.util.List;
@@ -91,7 +90,7 @@ public class TaskServiceExternalTest {
         assertEquals(tasksArray.length, tasksDTO.size());
         for( int i = 0; i < tasksArray.length;i++){
 
-            assertEquals(tasksArray[i].id, tasksDTO.get(i).getId());
+            assertEquals("EXT"+tasksArray[i].id, tasksDTO.get(i).getId());
             assertEquals(tasksArray[i].name, tasksDTO.get(i).getDescription());
             assertEquals(tasksArray[i].completed, tasksDTO.get(i).isDone());
 
@@ -108,15 +107,15 @@ public class TaskServiceExternalTest {
 
         setTasksArray();
 
-        wireMockServer.stubFor(get(WireMock.urlEqualTo(BASE_URL_PART))
+        wireMockServer.stubFor(get(WireMock.urlEqualTo(BASE_URL_PART+"1"))
                 .withBasicAuth(USER, PASSWORD)
                 .willReturn(okJson(makeJSONString(tasksArray[taskIndex]))));
 
         TaskDTO taskToFind = new TaskDTO();
-        taskToFind.setId(String.valueOf(taskIndex + 1));
+        taskToFind.setId("EXT" + String.valueOf(taskIndex + 1));
         TaskDTO taskDTO = taskServiceExternal.findByUserId(taskToFind,getUser());
 
-        assertEquals(tasksArray[taskIndex].id, taskDTO.getId());
+        assertEquals("EXT" + tasksArray[taskIndex].id, taskDTO.getId());
         assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
         assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
 
@@ -131,7 +130,7 @@ public class TaskServiceExternalTest {
                 .willReturn(okJson("")));
 
         TaskDTO taskToFind = new TaskDTO();
-        taskToFind.setId(String.valueOf(1));
+        taskToFind.setId("EXT"+ String.valueOf(1));
         try {
 
             TaskDTO taskDTO = taskServiceExternal.findByUserId(taskToFind, getUser());
@@ -162,7 +161,7 @@ public class TaskServiceExternalTest {
         taskToSave.setDescription(tasksArray[taskIndex].name);
         TaskDTO taskDTO = taskServiceExternal.save(taskToSave, getUser());
 
-        assertEquals(tasksArray[taskIndex].id, taskDTO.getId());
+        assertEquals("EXT" + tasksArray[taskIndex].id, taskDTO.getId());
         assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
         assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
 
@@ -180,7 +179,7 @@ public class TaskServiceExternalTest {
                 .willReturn(ok("")));
 
         TaskDTO taskToDelete = new TaskDTO();
-        taskToDelete.setId(taskId);
+        taskToDelete.setId("EXT" + taskId);
         taskServiceExternal.deleteById(taskToDelete, getUser());
 
         wireMockServer.verify(deleteRequestedFor(WireMock.urlEqualTo(BASE_URL_PART

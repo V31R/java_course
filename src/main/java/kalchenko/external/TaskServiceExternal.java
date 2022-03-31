@@ -37,7 +37,8 @@ public class TaskServiceExternal implements TaskService {
         List<TaskDTO> result = new ArrayList<>();
         for (var task : response.getBody()){
 
-            result.add(taskMapper.toDTO(task));
+            result.add(getDTO(task));
+
 
         }
 
@@ -49,8 +50,9 @@ public class TaskServiceExternal implements TaskService {
     public TaskDTO findByUserId(TaskDTO taskDTO, Users users) {
 
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
-
         HttpEntity<ExternalTask> entity = new HttpEntity<ExternalTask>(httpHeaders);
+
+        taskDTO.setId(taskDTO.getId().substring(3));
         var response = restTemplate.exchange(baseURL+taskDTO.getId(), HttpMethod.GET,entity,ExternalTask.class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError() || response.getBody() == null){
@@ -59,7 +61,7 @@ public class TaskServiceExternal implements TaskService {
 
         }
 
-        return taskMapper.toDTO(response.getBody());
+        return getDTO(response.getBody());
 
     }
 
@@ -79,7 +81,7 @@ public class TaskServiceExternal implements TaskService {
 
         }
 
-        return taskMapper.toDTO(response.getBody());
+        return getDTO(response.getBody());
 
     }
 
@@ -87,8 +89,9 @@ public class TaskServiceExternal implements TaskService {
     public void deleteById(TaskDTO taskDTO, Users users) {
 
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
-
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        taskDTO.setId(taskDTO.getId().substring(3));
         var response =
                 restTemplate.exchange(baseURL+"delete/"+taskDTO.getId(),
                         HttpMethod.DELETE,entity,String.class);
@@ -107,6 +110,15 @@ public class TaskServiceExternal implements TaskService {
         httpHeaders.setBasicAuth(user.getUsername(), user.getPassword());
 
         return  httpHeaders;
+
+    }
+
+    private TaskDTO getDTO(ExternalTask externalTask){
+
+        var dto = taskMapper.toDTO(externalTask);
+        dto.setId("EXT"+dto.getId());
+
+        return  dto;
 
     }
 
