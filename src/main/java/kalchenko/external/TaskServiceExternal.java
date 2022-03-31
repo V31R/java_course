@@ -53,7 +53,7 @@ public class TaskServiceExternal implements TaskService {
         HttpEntity<ExternalTask> entity = new HttpEntity<ExternalTask>(httpHeaders);
         var response = restTemplate.exchange(baseURL, HttpMethod.GET,entity,ExternalTask.class);
         HttpStatus statusCode = response.getStatusCode();
-        if(statusCode.isError()){
+        if(statusCode.isError() || response.getBody() == null){
 
             throw  new TaskNotFoundException(Long.valueOf(taskDTO.getId()));
 

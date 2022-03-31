@@ -2,31 +2,20 @@ package kalchenko.external;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.Options;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+
 import kalchenko.SecurityConfiguration;
 import kalchenko.exception.TaskNotFoundException;
 import kalchenko.security.Users;
 import kalchenko.taskDTOLayer.TaskDTO;
-import org.apache.http.impl.conn.Wire;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.web.client.RestTemplate;
+
 
 import java.util.List;
 
@@ -106,6 +95,52 @@ public class TaskServiceExternalTest {
         }
 
     }
+
+    @Test
+    public void testFindByUserId_IfFounded(){
+
+        int taskIndex = 0;
+
+        setTasksArray();
+
+        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/"))
+                .withBasicAuth(USER, PASSWORD)
+                .willReturn(okJson(makeJSONString(tasksArray[taskIndex]))));
+
+        TaskDTO taskToFind = new TaskDTO();
+        taskToFind.setId(String.valueOf(taskIndex + 1));
+        TaskDTO taskDTO = taskServiceExternal.findByUserId(taskToFind,getUser());
+
+        assertEquals(tasksArray[taskIndex].id, taskDTO.getId());
+        assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
+        assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
+
+
+    }
+
+    @Test
+    public void testFindByUserId_IfNotFounded(){
+
+        wireMockServer.stubFor(get(WireMock.urlEqualTo("/taskRest/"))
+                .withBasicAuth(USER, PASSWORD)
+                .willReturn(okJson("")));
+
+        TaskDTO taskToFind = new TaskDTO();
+        taskToFind.setId(String.valueOf(1));
+        try {
+
+            TaskDTO taskDTO = taskServiceExternal.findByUserId(taskToFind, getUser());
+            fail("Expected" + TaskNotFoundException.class);
+
+        }
+        catch (TaskNotFoundException taskNotFoundException){
+
+            assertNotNull(taskNotFoundException);
+
+        }
+
+    }
+
 
     private static  Users getUser(){
 
