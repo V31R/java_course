@@ -1,5 +1,6 @@
 package kalchenko.task;
 
+import kalchenko.external.TaskServiceExternal;
 import kalchenko.security.Users;
 import kalchenko.taskDTOLayer.TaskDTO;
 import kalchenko.taskDTOLayer.TaskServiceImpl;
@@ -20,19 +21,27 @@ import java.util.List;
 public class TaskController {
 
     private final TaskServiceImpl localService;
+    private final TaskServiceExternal externalService;
 
 
-
-    public TaskController(TaskServiceImpl localService) {
+    public TaskController(TaskServiceImpl localService,TaskServiceExternal externalService) {
 
         this.localService = localService;
+        this.externalService = externalService;
 
     }
 
     @GetMapping("")
     public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
 
-        return localService.findAllByUserId(user).stream().toList();
+        var tasks= localService.findAllByUserId(user);
+        if(tasks.size() == 0){
+
+            tasks = externalService.findAllByUserId(user);
+
+        }
+
+        return tasks;
 
     }
 

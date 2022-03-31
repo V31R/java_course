@@ -18,8 +18,11 @@ import java.util.List;
 public class TaskServiceExternal implements TaskService {
 
     RestTemplate restTemplate = new RestTemplate();
-    static private  String  baseURL = "http://localhost:54322/taskRest/";
-    private ExternalTaskMapper taskMapper = new ExternalTaskMapperImpl();
+    final static private String  host = "http://localhost:";
+    final static private String baseURL= "/taskRest/";
+    private int port = 54322;
+    final private ExternalTaskMapper taskMapper = new ExternalTaskMapperImpl();
+    final static private String prefix = "EXT";
 
     @Override
     public List<TaskDTO> findAllByUserId(Users users) {
@@ -27,7 +30,7 @@ public class TaskServiceExternal implements TaskService {
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
 
         HttpEntity<ExternalTask[]> entity = new HttpEntity<ExternalTask[]>(httpHeaders);
-        var response = restTemplate.exchange(baseURL, HttpMethod.GET,entity,ExternalTask[].class);
+        var response = restTemplate.exchange(url(), HttpMethod.GET,entity,ExternalTask[].class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError() || response.getBody() == null){
 
@@ -52,8 +55,8 @@ public class TaskServiceExternal implements TaskService {
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
         HttpEntity<ExternalTask> entity = new HttpEntity<ExternalTask>(httpHeaders);
 
-        taskDTO.setId(taskDTO.getId().substring(3));
-        var response = restTemplate.exchange(baseURL+taskDTO.getId(), HttpMethod.GET,entity,ExternalTask.class);
+        taskDTO.setId(taskDTO.getId().substring(prefix.length()));
+        var response = restTemplate.exchange(url()+taskDTO.getId(), HttpMethod.GET,entity,ExternalTask.class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError() || response.getBody() == null){
 
@@ -72,7 +75,7 @@ public class TaskServiceExternal implements TaskService {
 
         HttpEntity<ExternalTask> entity = new HttpEntity<ExternalTask>(httpHeaders);
         var response =
-                restTemplate.exchange(baseURL+"add?name="+taskDTO.getDescription(),
+                restTemplate.exchange(url()+"add?name="+taskDTO.getDescription(),
                         HttpMethod.POST,entity,ExternalTask.class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError()){
@@ -91,9 +94,9 @@ public class TaskServiceExternal implements TaskService {
         HttpHeaders httpHeaders = getHeaderWithAuth(users);
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
-        taskDTO.setId(taskDTO.getId().substring(3));
+        taskDTO.setId(taskDTO.getId().substring(prefix.length()));
         var response =
-                restTemplate.exchange(baseURL+"delete/"+taskDTO.getId(),
+                restTemplate.exchange(url()+"delete/"+taskDTO.getId(),
                         HttpMethod.DELETE,entity,String.class);
         HttpStatus statusCode = response.getStatusCode();
         if(statusCode.isError()){
@@ -101,6 +104,19 @@ public class TaskServiceExternal implements TaskService {
             throw  new TaskNotFoundException(Long.valueOf(taskDTO.getId()));
 
         }
+
+    }
+
+
+    public void setPort(int port){
+
+        this.port = port;
+
+    }
+
+    public int getPort() {
+
+        return port;
 
     }
 
@@ -116,9 +132,15 @@ public class TaskServiceExternal implements TaskService {
     private TaskDTO getDTO(ExternalTask externalTask){
 
         var dto = taskMapper.toDTO(externalTask);
-        dto.setId("EXT"+dto.getId());
+        dto.setId(prefix+dto.getId());
 
         return  dto;
+
+    }
+
+    private String url(){
+
+        return host + port + baseURL;
 
     }
 

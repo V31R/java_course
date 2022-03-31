@@ -11,6 +11,7 @@ import kalchenko.taskDTOLayer.TaskDTO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class TaskServiceExternalTest {
 
     private static final String BASE_URL_PART = "/taskRest/";
 
+    final static private String prefix = "EXT";
+
     private static TestTask[] tasksArray;
 
     private static WireMockServer wireMockServer;
@@ -41,8 +44,14 @@ public class TaskServiceExternalTest {
     @BeforeAll
     static void startWireMock(){
 
-        wireMockServer = new WireMockServer(wireMockConfig().port(54322));
+        wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
         wireMockServer.start();
+
+    }
+    @BeforeEach
+    void setPortService(){
+
+        taskServiceExternal.setPort(wireMockServer.port());
 
     }
 
@@ -56,7 +65,7 @@ public class TaskServiceExternalTest {
     @Test
     public void testWireMockSetUp(){
 
-        assertEquals("http://localhost:54322", wireMockServer.baseUrl());
+        assertEquals("http://localhost:" + taskServiceExternal.getPort(), wireMockServer.baseUrl());
         assertTrue(wireMockServer.isRunning());
 
     }
@@ -90,7 +99,7 @@ public class TaskServiceExternalTest {
         assertEquals(tasksArray.length, tasksDTO.size());
         for( int i = 0; i < tasksArray.length;i++){
 
-            assertEquals("EXT"+tasksArray[i].id, tasksDTO.get(i).getId());
+            assertEquals(prefix+tasksArray[i].id, tasksDTO.get(i).getId());
             assertEquals(tasksArray[i].name, tasksDTO.get(i).getDescription());
             assertEquals(tasksArray[i].completed, tasksDTO.get(i).isDone());
 
@@ -112,10 +121,10 @@ public class TaskServiceExternalTest {
                 .willReturn(okJson(makeJSONString(tasksArray[taskIndex]))));
 
         TaskDTO taskToFind = new TaskDTO();
-        taskToFind.setId("EXT" + String.valueOf(taskIndex + 1));
+        taskToFind.setId(prefix + String.valueOf(taskIndex + 1));
         TaskDTO taskDTO = taskServiceExternal.findByUserId(taskToFind,getUser());
 
-        assertEquals("EXT" + tasksArray[taskIndex].id, taskDTO.getId());
+        assertEquals(prefix + tasksArray[taskIndex].id, taskDTO.getId());
         assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
         assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
 
@@ -130,7 +139,7 @@ public class TaskServiceExternalTest {
                 .willReturn(okJson("")));
 
         TaskDTO taskToFind = new TaskDTO();
-        taskToFind.setId("EXT"+ String.valueOf(1));
+        taskToFind.setId(prefix+ String.valueOf(1));
         try {
 
             TaskDTO taskDTO = taskServiceExternal.findByUserId(taskToFind, getUser());
@@ -161,7 +170,7 @@ public class TaskServiceExternalTest {
         taskToSave.setDescription(tasksArray[taskIndex].name);
         TaskDTO taskDTO = taskServiceExternal.save(taskToSave, getUser());
 
-        assertEquals("EXT" + tasksArray[taskIndex].id, taskDTO.getId());
+        assertEquals(prefix + tasksArray[taskIndex].id, taskDTO.getId());
         assertEquals(tasksArray[taskIndex].name, taskDTO.getDescription());
         assertEquals(tasksArray[taskIndex].completed, taskDTO.isDone());
 
@@ -179,7 +188,7 @@ public class TaskServiceExternalTest {
                 .willReturn(ok("")));
 
         TaskDTO taskToDelete = new TaskDTO();
-        taskToDelete.setId("EXT" + taskId);
+        taskToDelete.setId(prefix + taskId);
         taskServiceExternal.deleteById(taskToDelete, getUser());
 
         wireMockServer.verify(deleteRequestedFor(WireMock.urlEqualTo(BASE_URL_PART
