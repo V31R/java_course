@@ -174,55 +174,34 @@ public class TaskControllerTest {
 
     }
 
-    /*
     @Test
-    public void testEditToggleTask_IfFound(){
+    public void testEditToggleTask_IfFound_Local(){
 
-        taskController.editToggleTask(1L, task, user);
+        taskController.editToggleTask(taskDTO, user);
 
-        Mockito.verify(localServiceMock).findByUserId(Mockito.anyInt(),Mockito.anyInt());
+        Mockito.verify(localServiceMock).findByUserId(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
 
     }
 
     @Test
-    public void testEditToggleTask_IfFound_SetID(){
+    public void testEditToggleTask_IfFound_Save_Local(){
 
-        Long testId = Long.valueOf(1);
+        taskController.editToggleTask(taskDTO, user);
 
-        taskController.editToggleTask(testId, task, user);
-
-        assertEquals(testId, task.getId());
+        Mockito.verify(localServiceMock).save(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
 
     }
 
-    @Test
-    public void testEditToggleTask_IfFound_SetUser(){
 
-        taskController.editToggleTask(1L, task, user);
-
-        assertEquals(task.getUser().getUserID(), user.getUserID());
-        assertEquals(task.getUser().getUsername(), user.getUsername());
-        assertEquals(task.getUser().getPassword(), user.getPassword());
-
-    }
 
     @Test
-    public void testEditToggleTask_IfFound_Save(){
-
-        taskController.editToggleTask(1L, task, user);
-
-        Mockito.verify(localServiceMock).save(Mockito.any(Task.class));
-
-    }
-
-    @Test
-    public void testEditToggleTask_NotFound(){
+    public void testEditToggleTask_NotFound_Local(){
 
         setLocalTaskServiceMockForException();
 
         try {
 
-            taskController.editToggleTask(1L, task, user);
+            taskController.editToggleTask(taskDTO, user);
             fail("Expected TaskNotFoundException");
 
         }
@@ -233,7 +212,45 @@ public class TaskControllerTest {
         }
 
     }
-    */
+
+    @Test
+    public void testEditToggleTask_IfFound_External(){
+
+        taskController.editToggleTask(taskDTOExt, user);
+
+        Mockito.verify(externalServiceMock).findByUserId(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
+
+    }
+
+    @Test
+    public void testEditToggleTask_IfFound_Save_External(){
+
+        taskController.editToggleTask(taskDTOExt, user);
+
+        Mockito.verify(externalServiceMock).save(Mockito.any(TaskDTO.class),Mockito.any(Users.class));
+
+    }
+
+
+
+    @Test
+    public void testEditToggleTask_NotFound_External(){
+
+        setExternalTaskServiceMockForException();
+
+        try {
+
+            taskController.editToggleTask(taskDTOExt, user);
+            fail("Expected TaskNotFoundException");
+
+        }
+        catch (TaskNotFoundException taskNotFoundException) {
+
+            assertNotNull(taskNotFoundException);
+
+        }
+
+    }
 
     private static Users getUser(){
 
@@ -281,8 +298,6 @@ public class TaskControllerTest {
 
         Mockito.when(externalServiceMock.findByUserId(Mockito.any(TaskDTO.class),Mockito.any(Users.class)))
                 .thenThrow(new TaskNotFoundException(1));
-
-
 
     }
 
