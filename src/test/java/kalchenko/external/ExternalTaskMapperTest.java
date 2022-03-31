@@ -1,8 +1,6 @@
 package kalchenko.external;
 
 import kalchenko.taskDTOLayer.TaskDTO;
-import kalchenko.taskDTOLayer.TaskMapper;
-import kalchenko.taskDTOLayer.TaskMapperImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
