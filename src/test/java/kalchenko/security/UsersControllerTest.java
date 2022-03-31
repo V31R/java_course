@@ -1,9 +1,6 @@
 package kalchenko.security;
 
 import kalchenko.SecurityConfiguration;
-import kalchenko.security.UserRepository;
-import kalchenko.security.Users;
-import kalchenko.security.UsersController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.Suite;

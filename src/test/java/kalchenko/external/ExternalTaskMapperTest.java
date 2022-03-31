@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExternalTaskMapperTest {
 
-    private static String idString="1";
-    private static Long id = Long.valueOf(1);
-    private static String description = "description";
+    final private static String idString="1";
+    final private static Long id = Long.valueOf(1);
+    final private static String description = "description";
 
     @Test
     void taskToTaskDTO_Test(){
