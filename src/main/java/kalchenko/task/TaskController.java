@@ -14,7 +14,12 @@ import javax.validation.Valid;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/tasks")
@@ -34,10 +39,29 @@ public class TaskController {
 
     @GetMapping("")
     public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
-        
-        var tasks= localService.findAllByUserId(user);
 
-        tasks.addAll(externalService.findAllByUserId(user));
+        ExecutorService service = Executors.newFixedThreadPool(1);
+        List<TaskDTO> external = new ArrayList<>();
+
+        Future future = service.submit(()-> {
+
+            external.addAll(externalService.findAllByUserId(user));
+
+        });
+
+        var tasks= localService.findAllByUserId(user);
+        try {
+
+            future.get();
+
+        }
+        catch (InterruptedException | ExecutionException exception){
+
+            return tasks;
+
+        }
+
+        tasks.addAll(external);
 
         return tasks;
 
