@@ -37,7 +37,8 @@ public class TaskServiceExternalTest {
     @Value("${to_do_list.external.base_url}")
     private String BASE_URL_PART;
 
-    final static private String prefix = "EXT";
+    @Value("${to_do_list.external.prefix}")
+    private String prefix;
 
     private static TestTask[] tasksArray;
 

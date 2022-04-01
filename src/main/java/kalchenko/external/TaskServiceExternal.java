@@ -22,12 +22,17 @@ public class TaskServiceExternal implements TaskService {
 
     @Value("${to_do_list.external.host}")
     private String  host;
+
     @Value("${to_do_list.external.base_url}")
     private String baseURL;
+
     @Value("${to_do_list.external.port}")
     private int port ;
+
+    @Value("${to_do_list.external.prefix}")
+    private String prefix;
+
     final private ExternalTaskMapper taskMapper = new ExternalTaskMapperImpl();
-    final static private String prefix = "EXT";
 
     @Override
     public List<TaskDTO> findAllByUserId(Users users) {
