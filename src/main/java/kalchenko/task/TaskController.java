@@ -1,13 +1,17 @@
 package kalchenko.task;
 
-import kalchenko.exception.TaskNotFoundException;
+import kalchenko.external.TaskServiceExternal;
 import kalchenko.security.Users;
+import kalchenko.taskDTOLayer.TaskDTO;
+import kalchenko.taskDTOLayer.TaskService;
+import kalchenko.taskDTOLayer.TaskServiceImpl;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -17,60 +21,86 @@ import java.util.List;
 @Validated
 public class TaskController {
 
-    private final TaskCRUD taskRepository;
+    private final TaskServiceImpl localService;
+    private final TaskServiceExternal externalService;
+    private TaskService currentService;
 
-    public TaskController(TaskCRUD taskRepository) {
+    public TaskController(TaskServiceImpl localService,TaskServiceExternal externalService) {
 
-        this.taskRepository = taskRepository;
+        this.localService = localService;
+        this.externalService = externalService;
 
     }
 
     @GetMapping("")
-    public List<Task> getList(@AuthenticationPrincipal Users user){
+    public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
+        
+        var tasks= localService.findAllByUserId(user);
 
-        return taskRepository.findAllByUserId(user.getUserID()).stream().toList();
+        tasks.addAll(externalService.findAllByUserId(user));
+
+        return tasks;
 
     }
 
     @PostMapping("/{description}")
-    public Task newTask(@PathVariable("description") @NotBlank String description, @AuthenticationPrincipal Users user){
+    public TaskDTO newTask(@PathVariable("description") @NotBlank String description, @AuthenticationPrincipal Users user){
 
-        Task newTask = new Task(description);
-        newTask.setUser(user);
-        return taskRepository.save(newTask);
-
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setDescription(description);
+        return localService.save(taskDTO,user);
 
     }
 
 
     @GetMapping("/{id}")
-    public Task getTask(@PathVariable("id") @Min(1) Long id, @AuthenticationPrincipal Users user){
+    public TaskDTO getTask(@PathVariable("id") @NotBlank String id, @AuthenticationPrincipal Users user){
 
-        return taskRepository.findByUserId(id, user.getUserID())
-                .orElseThrow(()-> new TaskNotFoundException(id));
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setId(id);
+        chooseService(id);
+        
+        return currentService.findByUserId(taskDTO, user);
 
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable("id") @Min(1) Long id, @AuthenticationPrincipal Users user){
+    public void deleteTask(@PathVariable("id") @NotBlank String id, @AuthenticationPrincipal Users user){
 
-        Task task=taskRepository.findByUserId(id, user.getUserID())
-                .orElseThrow(()-> new TaskNotFoundException(id));
-        taskRepository.deleteById(task.getId());
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setId(id);
+        chooseService(id);
+
+        currentService.deleteById(taskDTO,user);
 
     }
 
-    @PatchMapping("/{id}")
-    public void editToggleTask(@PathVariable("id") @Min (1) Long id, @RequestBody @Valid @NotNull Task task,
+    @PutMapping("")
+    public void editToggleTask( @RequestBody @Valid @NotNull TaskDTO taskDTO,
                                @AuthenticationPrincipal Users user){
 
-        Task findedtask = taskRepository.findByUserId(id, user.getUserID())
-                .orElseThrow(()-> new TaskNotFoundException(id));
+        chooseService(taskDTO.getId());
+        
+        TaskDTO findedTask = currentService.findByUserId(taskDTO, user);
+        findedTask.setDescription(taskDTO.getDescription());
+        findedTask.setDone(taskDTO.isDone());
+        currentService.save(findedTask,user);
 
-        task.setId(id);
-        task.setUser(findedtask.getUser());
+    }
 
-        taskRepository.save(task);
+    private TaskService chooseService(String id){
+
+        try {
+            var l = Long.valueOf(id);
+            currentService = localService;
+        }
+        catch (NumberFormatException numberFormatException){
+
+            currentService = externalService;
+
+        }
+
+        return  currentService;
 
     }
 
