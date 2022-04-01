@@ -29,6 +29,7 @@ public class TaskController {
     private final TaskServiceImpl localService;
     private final TaskServiceExternal externalService;
     private TaskService currentService;
+    private ExecutorService service = Executors.newFixedThreadPool(1);
 
     public TaskController(TaskServiceImpl localService,TaskServiceExternal externalService) {
 
@@ -40,7 +41,6 @@ public class TaskController {
     @GetMapping("")
     public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
 
-        ExecutorService service = Executors.newFixedThreadPool(1);
         List<TaskDTO> external = new ArrayList<>();
 
         Future future = service.submit(()-> {
