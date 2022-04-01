@@ -6,6 +6,8 @@ import kalchenko.taskDTOLayer.TaskDTO;
 import kalchenko.taskDTOLayer.TaskService;
 import kalchenko.taskDTOLayer.TaskServiceImpl;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,10 @@ import javax.validation.Valid;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/tasks")
@@ -34,10 +39,24 @@ public class TaskController {
 
     @GetMapping("")
     public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
-        
-        var tasks= localService.findAllByUserId(user);
 
-        tasks.addAll(externalService.findAllByUserId(user));
+        List<TaskDTO> external = new ArrayList<>();
+
+        var future = getListAsync(user);
+
+        var tasks= localService.findAllByUserId(user);
+        try {
+
+            external.addAll(future.get());
+
+        }
+        catch (InterruptedException | ExecutionException exception){
+
+            return tasks;
+
+        }
+
+        tasks.addAll(external);
 
         return tasks;
 
@@ -101,6 +120,12 @@ public class TaskController {
         }
 
         return  currentService;
+
+    }
+    @Async
+    private Future<List<TaskDTO>> getListAsync(Users user){
+
+        return new AsyncResult<List<TaskDTO>>(externalService.findAllByUserId(user));
 
     }
 
