@@ -36,11 +36,8 @@ public class TaskController {
     public List<TaskDTO> getList(@AuthenticationPrincipal Users user){
         
         var tasks= localService.findAllByUserId(user);
-        if(tasks.size() == 0){
 
-            tasks = externalService.findAllByUserId(user);
-
-        }
+        tasks.addAll(externalService.findAllByUserId(user));
 
         return tasks;
 

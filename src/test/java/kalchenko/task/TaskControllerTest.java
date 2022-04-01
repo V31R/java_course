@@ -12,6 +12,7 @@ import org.junit.platform.suite.api.Suite;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,10 +34,10 @@ public class TaskControllerTest {
         taskDTO = getTaskDTO();
         localServiceMock = Mockito.mock(TaskServiceImpl.class);
 
-        Optional<TaskDTO> optional = Optional.of(getTaskDTO());
-
+        List<TaskDTO> list = new ArrayList<>();
+        list.add(taskDTO);
         Mockito.when(localServiceMock.findAllByUserId(Mockito.any(Users.class)))
-                .thenReturn(optional.stream().toList());
+                .thenReturn(list);
 
         Mockito.when(localServiceMock.findByUserId(Mockito.any(TaskDTO.class),
                 Mockito.any(Users.class))).thenReturn(taskDTO);
@@ -45,10 +46,11 @@ public class TaskControllerTest {
 
         taskDTOExt = getTaskDTOExt();
 
-        optional = Optional.of(getTaskDTOExt());
+        list = new ArrayList<>();
+        list.add(taskDTOExt);
 
         Mockito.when(externalServiceMock.findAllByUserId(Mockito.any(Users.class)))
-                .thenReturn(optional.stream().toList());
+                .thenReturn(list);
 
         Mockito.when(externalServiceMock.findByUserId(Mockito.any(TaskDTO.class),
                 Mockito.any(Users.class))).thenReturn(taskDTOExt);
@@ -59,6 +61,9 @@ public class TaskControllerTest {
 
     @Test
     public void testGetList_Local(){
+
+        Mockito.when(externalServiceMock.findAllByUserId(Mockito.any(Users.class)))
+                .thenReturn(new ArrayList<>());
 
         taskController.getList(user);
 
@@ -75,6 +80,16 @@ public class TaskControllerTest {
         taskController.getList(user);
 
         Mockito.verify(localServiceMock).findAllByUserId(Mockito.any(Users.class));
+
+    }
+
+    @Test
+    public void testGetList_ALL(){
+
+        taskController.getList(user);
+
+        Mockito.verify(localServiceMock).findAllByUserId(Mockito.any(Users.class));
+        Mockito.verify(externalServiceMock).findAllByUserId(Mockito.any(Users.class));
 
     }
 
