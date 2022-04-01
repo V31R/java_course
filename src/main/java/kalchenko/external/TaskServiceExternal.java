@@ -4,6 +4,7 @@ import kalchenko.exception.TaskNotFoundException;
 import kalchenko.security.Users;
 import kalchenko.taskDTOLayer.TaskDTO;
 import kalchenko.taskDTOLayer.TaskService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,9 +19,13 @@ import java.util.List;
 public class TaskServiceExternal implements TaskService {
 
     RestTemplate restTemplate = new RestTemplate();
-    final static private String  host = "http://localhost:";
-    final static private String baseURL= "/taskRest/";
-    private int port = 54322;
+
+    @Value("${to_do_list.external.host}")
+    private String  host;
+    @Value("${to_do_list.external.base_url}")
+    private String baseURL;
+    @Value("${to_do_list.external.port}")
+    private int port ;
     final private ExternalTaskMapper taskMapper = new ExternalTaskMapperImpl();
     final static private String prefix = "EXT";
 

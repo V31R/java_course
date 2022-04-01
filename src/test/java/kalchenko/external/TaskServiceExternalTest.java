@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -33,7 +34,8 @@ public class TaskServiceExternalTest {
     private static final String USER = "user";
     private static final String PASSWORD = "1234";
 
-    private static final String BASE_URL_PART = "/taskRest/";
+    @Value("${to_do_list.external.base_url}")
+    private String BASE_URL_PART;
 
     final static private String prefix = "EXT";
 
